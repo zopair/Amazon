@@ -2,7 +2,7 @@
 from __future__ import annotations
 import hashlib
 from pathlib import Path
-from PIL import Image
+from PIL import Image, ImageChops
 from scripts.art_generator import generate_artwork
 
 def _flatten_to_rgb(source: Path, destination: Path, dpi: int) -> bytes:
@@ -12,9 +12,15 @@ def _flatten_to_rgb(source: Path, destination: Path, dpi: int) -> bytes:
         background=Image.new("RGBA",rgba.size,(255,255,255,255))
         background.alpha_composite(rgba)
         flattened=background.convert("RGB")
-        pixels=flattened.tobytes()
+        gray=flattened.convert("L")
+        neutral=Image.merge("RGB",(gray,gray,gray))
+        if ImageChops.difference(flattened,neutral).getbbox():
+            raise ValueError(f"source artwork must be monochrome black line art: {source.name}")
+        # Convert anti-aliased grayscale edges to pure black/white; no gray fills or shading survive.
+        binary=gray.point(lambda value: 0 if value<128 else 255).convert("RGB")
+        pixels=binary.tobytes()
         destination.parent.mkdir(parents=True,exist_ok=True)
-        flattened.save(destination,format="PNG",dpi=(dpi,dpi),optimize=True)
+        binary.save(destination,format="PNG",dpi=(dpi,dpi),optimize=True)
         return hashlib.sha256(pixels).digest()
 
 def load_artwork(
