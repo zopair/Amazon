@@ -1,6 +1,13 @@
 name: Artwork Quality Audit
 
 on:
+  pull_request:
+    paths:
+      - "scripts/art_generator.py"
+      - "scripts/theme_art.py"
+      - "scripts/artwork_quality.py"
+      - "config/artwork_generation_spec.json"
+      - ".github/workflows/artwork-quality-audit.yml"
   workflow_dispatch:
     inputs:
       theme:
