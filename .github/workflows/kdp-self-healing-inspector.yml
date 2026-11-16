@@ -4,6 +4,7 @@ on:
   workflow_run:
     workflows:
       - KDP Production Pipeline
+      - Inspector Tests
     types:
       - completed
     branches:
