@@ -125,8 +125,8 @@ def _fruit(draw, name, cx, cy, s, width, variant=0):
 def generate_artwork(theme: str, count: int, output_dir: str | Path, dpi: int = 300, line_width_pt: float = 2.4) -> list[Path]:
     if theme != "fruit" and theme not in THEME_DESIGNS:
         raise ValueError(f"Unsupported theme: {theme}. Supported themes: fruit, flowers, toys, birds, animals, professions")
-    if count < 1 or count > 50:
-        raise ValueError("illustration count must be between 1 and 50")
+    if count < 1 or count > 12:
+        raise ValueError("the built-in generator provides 12 distinct motifs per theme; larger books require an exact set of approved original artwork files")
     if dpi < 300:
         raise ValueError("artwork resolution must be at least 300 DPI")
     if line_width_pt < 0.75:
@@ -147,14 +147,6 @@ def generate_artwork(theme: str, count: int, output_dir: str | Path, dpi: int = 
             _fruit(draw, name, cx, cy, scale, line_px, index)
         else:
             draw_theme_art(draw,theme,name,cx,cy,scale,line_px,index)
-        if index >= len(designs):
-            # Distinct, low-detail companion motifs keep longer volumes varied.
-            accent = designs[(index * 5 + 3) % len(designs)]
-            if theme == "fruit":
-                _fruit(draw, accent, cx + 540, cy + 620, 360, max(4,line_px-2), index + 1)
-                _leaf(draw, cx - 560, cy - 600, 210, max(4,line_px-2))
-            else:
-                draw_theme_art(draw,theme,accent,cx+520,cy+610,360,max(4,line_px-2),index+1)
         safe_name=name.replace(" ","_")
         path = output / f"{theme}_{index+1:02d}_{safe_name}.png"
         image.save(path, format="PNG", dpi=(dpi,dpi), optimize=True)
