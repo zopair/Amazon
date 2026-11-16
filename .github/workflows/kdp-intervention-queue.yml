@@ -1,0 +1,69 @@
+name: KDP Intervention Queue
+
+on:
+  schedule:
+    - cron: "0 */6 * * *"
+  workflow_dispatch:
+    inputs:
+      action:
+        description: Inspect the queue or resume an explicitly approved run
+        required: true
+        default: inspect
+        type: choice
+        options:
+          - inspect
+          - resume-approved
+      run_id:
+        description: Required only for manual resume-approved
+        required: false
+        type: string
+      approval_note:
+        description: Required explicit approval note for manual resume
+        required: false
+        type: string
+
+permissions:
+  actions: write
+  contents: read
+  issues: write
+
+concurrency:
+  group: kdp-intervention-queue
+  cancel-in-progress: false
+
+jobs:
+  inspect-or-resume:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      REPOSITORY: ${{ github.repository }}
+      EVENT_NAME: ${{ github.event_name }}
+      ACTION_NAME: ${{ inputs.action || 'inspect' }}
+      RUN_ID: ${{ inputs.run_id || '' }}
+      APPROVAL_NOTE: ${{ inputs.approval_note || '' }}
+    steps:
+      - name: Checkout trusted default branch
+        uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Ensure intervention labels exist
+        run: |
+          gh label create human-intervention --repo "$REPOSITORY" --color "D93F0B" --description "Owner decision required before workflow can continue" --force
+          gh label create approved-to-resume --repo "$REPOSITORY" --color "0E8A16" --description "Owner explicitly authorizes resuming the referenced failed run" --force
+          gh label create resume-started --repo "$REPOSITORY" --color "1D76DB" --description "Approved failed-job retry was requested" --force
+
+      - name: Inspect queue or resume approved run
+        run: |
+          set -euo pipefail
+          python scripts/intervention_controller.py \
+            --repo "$REPOSITORY" \
+            --event "$EVENT_NAME" \
+            --action "$ACTION_NAME" \
+            --run-id "$RUN_ID" \
+            --approval-note "$APPROVAL_NOTE" | tee intervention-result.json
+          cat intervention-result.json >> "$GITHUB_STEP_SUMMARY"

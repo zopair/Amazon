@@ -95,26 +95,26 @@ def build_report(log_text: str, metadata: dict[str, Any]) -> dict[str, Any]:
 def render_markdown(report: dict[str, Any]) -> str:
     lines = [
         "# KDP Workflow Diagnostic Report", "",
-        f"- Repository: \`{report.get('repository') or 'unknown'}\`",
-        f"- Workflow: \`{report.get('workflow') or 'unknown'}\`",
-        f"- Run ID: \`{report.get('run_id') or 'unknown'}\` (attempt {report.get('run_attempt') or 'unknown'})",
-        f"- Branch: \`{report.get('head_branch') or 'unknown'}\`",
-        f"- Conclusion: \`{report.get('conclusion') or 'unknown'}\`",
-        f"- Classification: **{report['status']}** / \`{report['primary_category']}\`",
-        f"- Retryable candidate: \`{str(report['retryable_candidate']).lower()}\`", "",
+        f"- Repository: `{report.get('repository') or 'unknown'}`",
+        f"- Workflow: `{report.get('workflow') or 'unknown'}`",
+        f"- Run ID: `{report.get('run_id') or 'unknown'}` (attempt {report.get('run_attempt') or 'unknown'})",
+        f"- Branch: `{report.get('head_branch') or 'unknown'}`",
+        f"- Conclusion: `{report.get('conclusion') or 'unknown'}`",
+        f"- Classification: **{report['status']}** / `{report['primary_category']}`",
+        f"- Retryable candidate: `{str(report['retryable_candidate']).lower()}`", "",
         "## Findings", "",
     ]
     if not report["findings"]:
         lines.append("No recognized error pattern was found. Inspect the original workflow logs.")
     for item in report["findings"]:
-        location = f" — \`{item['file']}:{item['source_line']}\`" if item.get("file") else ""
-        safe_message = item["message"].replace("\`", "'")
+        location = f" — `{item['file']}:{item['source_line']}`" if item.get("file") else ""
+        safe_message = item["message"].replace("`", "'")
         lines.extend([
             f"### {item['code']} ({item['category']})",
             f"- Workflow log line: {item['line']}",
             f"- Step: {item['step']}",
             f"- Source location: {location or 'not identified'}",
-            f"- Message: \`{safe_message}\`", "",
+            f"- Message: `{safe_message}`", "",
         ])
     lines.extend([
         "## Safety", "",

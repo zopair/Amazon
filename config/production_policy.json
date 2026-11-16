@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "policy_id": "kdp-childrens-coloring-books-v1",
+  "must_pass": [
+    "metadata_matches_cover",
+    "age_range_is_4_to_8",
+    "original_artwork_or_documented_rights",
+    "no_unlicensed_characters_brands_logos_or_trademarks",
+    "no_misleading_title_subtitle_description_keywords_or_categories",
+    "no_duplicate_or_near_duplicate_pages_within_volume",
+    "no_excessively_reused_content_across_books",
+    "single_sided_odd_page_art_even_page_blank",
+    "trim_size_exact",
+    "page_count_even_and_at_least_24",
+    "raster_artwork_at_least_300_dpi",
+    "line_width_at_least_0_75_pt",
+    "all_fonts_embedded",
+    "no_transparency_or_layers",
+    "no_pdf_document_metadata",
+    "cover_color_space_cmyk",
+    "page_count_within_8_5x11_limit",
+    "no_encryption_annotations_or_crop_marks",
+    "cover_dimensions_match_calculator",
+    "cover_bleed_0_125_in",
+    "barcode_safe_area_reserved"
+  ],
+  "creative_constraints": {
+    "audience": "children ages 4-8",
+    "subject_scope": ["fruit", "flowers", "general toys", "birds", "animals", "children professions"],
+    "artwork": "original generic subject matter; no recognizable protected characters or branded product designs",
+    "line_art": "closed, clean, bold black contours on pure white; no shading, gray, gradients, halftones, or background clutter",
+    "composition": "one dominant subject or simple coherent group per coloring page; generous open areas; avoid tiny enclosed details",
+    "page_back": "completely blank; no page number, text, watermark, logo, pattern, or image",
+    "variation": "no duplicate or near-duplicate pages within a volume",
+    "text": "no spelling, factual, or educational claim unless independently checked against an authoritative source"
+  },
+  "anti_hallucination": {
+    "never_invent_kdp_requirements": true,
+    "use_official_kdp_sources_for_print_specs": true,
+    "separate_official_requirements_from_market_observations": true,
+    "record_source_url_and_checked_date": true,
+    "unknown_or_conflicting_spec_blocks_release": true,
+    "do_not_claim_kdp_acceptance_or_bestseller_status": true,
+    "do_not_publish_without_owner_approval": true
+  },
+  "ai_disclosure": {
+    "required_when_actual_text_images_or_translations_are_ai_generated": true,
+    "not_required_for_ai_assisted_editing_or_brainstorming_only": true,
+    "publisher_must_review_and_disclose_in_kdp_setup": true
+  },
+  "release_gates": [
+    "automated_validation_passes",
+    "human_visual_review_of_sample_passes",
+    "kdp_print_preview_review_passes",
+    "metadata_and_rights_check_passes",
+    "owner_explicitly_approves_publication"
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "supported_themes": [
+    {"id":"fruit","label":"Fruits","subjects":["apple","banana","orange","pear","grapes","watermelon","strawberry","pineapple","lemon","cherries","peach","avocado"]},
+    {"id":"flowers","label":"Flowers","subjects":["daisy","tulip","sunflower","rose","lily","poppy","wildflower","bluebell","hibiscus","lotus","dandelion","bouquet"]},
+    {"id":"toys","label":"General toys","subjects":["ball","teddy bear","building blocks","toy car","kite","toy train","robot","sailboat","drum","spinning top","puzzle piece","crayon"]},
+    {"id":"birds","label":"Birds","subjects":["songbird","duck","owl","penguin","parrot","peacock","flamingo","chick","swan","woodpecker","eagle","robin"]},
+    {"id":"animals","label":"Animals","subjects":["cat","dog","rabbit","elephant","lion","turtle","fish","giraffe","bear","fox","horse","frog"]},
+    {"id":"professions","label":"Children's professions","subjects":["doctor","teacher","chef","farmer","builder","pilot","firefighter","artist","scientist","veterinarian","gardener","astronaut"]}
+  ],
+  "common_profile": {
+    "trim_in":[8.5,11.0],
+    "page_count":24,
+    "design_count":12,
+    "single_sided":true,
+    "blank_reverse_pages":true,
+    "line_width_pt":2.4,
+    "minimum_dpi":300
+  }
+}
