@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "standard_trim": {"width_in": 8.5, "height_in": 11.0},
+  "standard_page_count": 100,
+  "standard_design_count": 50,
+  "single_sided": true,
+  "blank_reverse_pages": true,
+  "black_ink": true,
+  "white_paper": true,
+  "line_width_pt": 2.4,
+  "minimum_line_width_pt": 0.75,
+  "minimum_raster_dpi": 300,
+  "interior_bleed": false,
+  "cover_bleed_in": 0.125,
+  "cover_spine_formula": "page_count * 0.002252",
+  "spine_text_default": false,
+  "note": "100 pages / 50 designs is a commercial design target informed by observed independent coloring-book listings, not a KDP requirement or a sales guarantee. The sample remains 24 pages / 12 designs."
+}
