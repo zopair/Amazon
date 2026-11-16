@@ -250,6 +250,16 @@ def validate_book(interior_pdf: str|Path, cover_pdf: str|Path, meta: dict[str,An
                 errors.append(f"cover dimensions mismatch: found {actual_cover}, expected {(d['cover_width_in'],d['cover_height_in'])}")
             cover_fonts=_fonts_embedded(cover_page)
             cover_cmyk=_uses_cmyk_only(cover_page,cover)
+            cover_text=" ".join((cover_page.extract_text() or "").split()).casefold()
+            expected_title=" ".join(str(meta["title"]).split()).casefold()
+            expected_subtitle=" ".join(str(meta.get("subtitle","")).split()).casefold()
+            if expected_title not in cover_text:
+                errors.append("cover title does not match configured book title")
+            if expected_subtitle and expected_subtitle not in cover_text:
+                errors.append("cover subtitle does not match configured book subtitle")
+            expected_author=" ".join(str(meta.get("author") or "").split()).casefold()
+            if expected_author and expected_author not in cover_text:
+                errors.append("cover author does not match configured author metadata")
             if not cover_cmyk:
                 errors.append("cover must use CMYK color values rather than RGB")
             if not cover_fonts:
