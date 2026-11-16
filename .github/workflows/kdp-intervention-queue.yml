@@ -51,6 +51,12 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - name: Ensure intervention labels exist
+        run: |
+          gh label create human-intervention --repo "$REPOSITORY" --color "D93F0B" --description "Owner decision required before workflow can continue" --force
+          gh label create approved-to-resume --repo "$REPOSITORY" --color "0E8A16" --description "Owner explicitly authorizes resuming the referenced failed run" --force
+          gh label create resume-started --repo "$REPOSITORY" --color "1D76DB" --description "Approved failed-job retry was requested" --force
+
       - name: Inspect queue or resume approved run
         run: |
           set -euo pipefail
