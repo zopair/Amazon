@@ -173,8 +173,8 @@ def validate_book(interior_pdf: str|Path, cover_pdf: str|Path, meta: dict[str,An
         cover=PdfReader(str(cover_path),strict=True)
         if interior.is_encrypted or cover.is_encrypted:
             errors.append("PDF files must not be encrypted or password protected")
-        interior_metadata_absent=not any((interior.metadata or {}).values())
-        cover_metadata_absent=not any((cover.metadata or {}).values())
+        interior_metadata_absent=interior.metadata is None and interior.xmp_metadata is None
+        cover_metadata_absent=cover.metadata is None and cover.xmp_metadata is None
         if not interior_metadata_absent:
             errors.append("interior PDF contains document metadata; KDP submission files must not contain metadata")
         if not cover_metadata_absent:
