@@ -35,18 +35,18 @@ The 24-page sample is the KDP minimum and is intended for visual approval, not f
 
 ## 3. Official KDP print requirements used by the validator
 
-1. **Minimum page count:** paperback manuscripts must have at least 24 pages. KDP calculates the final count from the submitted manuscript and rounds up to an even number where necessary.
+1. **Page-count range:** the 8.5 × 11 in black-ink / white-paper paperback option allows 24–590 pages. KDP calculates the final count from the submitted manuscript and rounds up to an even number where necessary.
 2. **Single-page PDF:** upload individual pages, not two-page spreads.
 3. **Trim and bleed:** 8.5 × 11 in is the selected trim. This sample uses no interior bleed. If a future interior design reaches the edge, it must be rebuilt using KDP's bleed dimensions rather than reusing this no-bleed template.
 4. **Margins:** for 24–150 pages, the minimum inside/gutter margin is 0.375 in. For no-bleed pages, outside margins must be at least 0.25 in. This project deliberately uses 0.375 in on all four sides.
 5. **Image resolution:** at least 300 DPI. KDP recommends not exceeding 600 DPI for normal print files because very large files may delay processing.
 6. **Line width:** KDP's minimum for lines in graphics is 0.75 pt (0.01 in / 0.3 mm). The project target is 2.4 pt to produce bold outlines suitable for young children; this is an internal design choice, not an Amazon minimum.
-7. **Fonts:** embed all fonts. The cover generator uses embedded TrueType fonts. The interior is image-only and contains no text.
-8. **Cover geometry:** one continuous PDF containing back cover, spine, and front cover. Add 0.125 in bleed to all four outside edges. Keep important text and artwork at least 0.25 in inside the outer cover edge.
+7. **Fonts and metadata:** embed all fonts. The cover generator uses embedded TrueType fonts. The interior is image-only and contains no text. Remove PDF document metadata, annotations, comments, invisible objects, crop/trim marks, and placeholder text before upload.
+8. **Cover geometry and color:** one continuous PDF containing back cover, spine, and front cover. Add 0.125 in bleed to the top, bottom, and both outer edges. Use CMYK cover artwork, flatten layers/transparency, and keep important text at least 0.125 in inside trim lines (this project uses a more conservative 0.25 in safe zone). Cover text must be at least 7 pt.
 9. **White-paper black-and-white spine:** page count × 0.002252 in. Other paper/ink combinations use different coefficients and must not reuse this value.
 10. **Spine text:** KDP only prints spine text on books with more than 79 pages. This project defaults to no spine text because the narrow spine and fold tolerance can make it unreadable.
-11. **File hygiene:** do not encrypt or lock PDFs. Do not include crop/trim marks, comments, annotations, invisible objects, placeholder text, or transparency/layers. Embed images and flatten transparency.
-12. **Barcode:** KDP can place a barcode automatically if the publisher does not provide one. The sample leaves a reserved clear region on the lower back cover; the final position must be checked against the current KDP cover template.
+11. **File hygiene:** do not encrypt or lock PDFs. Do not include crop/trim marks, comments, annotations, invisible objects, placeholder text, or document metadata. Embed images and flatten transparency/layers.
+12. **Barcode:** KDP can place a barcode automatically if the publisher does not provide one. The suggested barcode area is 2 × 1.2 in (minimum 1.4 × 0.8 in), positioned at least 0.25 in from the spine and trim. The sample reserves a 2 × 1.2 in white region on the lower back cover.
 
 ### Cover formulas
 
@@ -121,10 +121,11 @@ A production book cannot be marked ready for publication until:
 - Create a Paperback Cover: https://kdp.amazon.com/en_US/help/topic/G201953020
 - Set Trim Size, Bleed, and Margins: https://kdp.amazon.com/en_US/help/topic/GVBQ3CMEQW3W2VL6
 - Save Your Manuscript File: https://kdp.amazon.com/en_US/help/topic/G202145060
-- Content Guidelines: https://kdp.amazon.com/en_US/help/topic/G200672390
+- Content Guidelines (including AI-generated disclosure): https://kdp.amazon.com/en_US/help/topic/G200635600
 - Metadata Guidelines: https://kdp.amazon.com/en_US/help/topic/G201097560
 - Publishing Public Domain Content: https://kdp.amazon.com/en_US/help/topic/G200743940
 - Keywords: https://kdp.amazon.com/en_US/help/topic/G201743260
+- Barcodes: https://kdp.amazon.com/en_US/help/topic/G5HDYGP4BXLX4RUW
 
 ## 10. Market evidence register
 
