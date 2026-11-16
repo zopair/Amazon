@@ -7,7 +7,7 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 from PIL import Image, ImageOps
-from scripts.art_generator import generate_artwork
+from scripts.artwork_loader import load_artwork
 from scripts.interior_builder import build_interior
 from scripts.cover_builder import build_cover
 from scripts.validator import validate_book
@@ -37,8 +37,10 @@ def _make_preview(images: list[Path], output: Path) -> None:
 def run(config_path: Path, output_dir: Path) -> dict:
     meta=json.loads(config_path.read_text(encoding="utf-8"))
     count=int(meta["interior"]["page_count"])//2
-    images=generate_artwork(
-        meta["content"]["theme"],count,output_dir.parent/"images",
+    images=load_artwork(
+        meta["content"]["theme"],count,
+        meta["content"].get("image_directory","assets/images"),
+        meta["content"].get("generated_image_directory","build/images"),
         int(meta["interior"]["min_dpi"]),float(meta["interior"]["line_width_pt"])
     )
     interior=output_dir/"interior.pdf"
