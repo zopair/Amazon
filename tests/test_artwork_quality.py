@@ -42,6 +42,7 @@ class ArtworkQualityTests(unittest.TestCase):
         self.assertEqual(report["status"], "PASS")
         self.assertEqual(report["assets"][0]["human_review"], "PENDING")
         self.assertEqual(report["assets"][0]["errors"], [])
+        self.assertIn("visual_originality", report["unverified_checks"])
 
     def test_rejects_wrong_canvas_dimensions(self):
         Image.new("RGB", (79, 100), "white").save(self.art_dir / "wrong.png", dpi=(300, 300))
