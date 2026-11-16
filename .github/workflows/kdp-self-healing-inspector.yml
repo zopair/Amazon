@@ -1,0 +1,126 @@
+name: KDP Self-Healing Inspector
+
+on:
+  workflow_run:
+    workflows:
+      - KDP Production Pipeline
+    types:
+      - completed
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      run_id:
+        description: Existing failed KDP workflow run ID to inspect
+        required: true
+        type: string
+
+permissions:
+  actions: read
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: kdp-inspector-${{ github.event.workflow_run.id || inputs.run_id }}
+  cancel-in-progress: false
+
+jobs:
+  inspect-and-repair:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'failure' &&
+       github.event.workflow_run.head_branch == 'main')
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      TARGET_RUN_ID: ${{ github.event.workflow_run.id || inputs.run_id }}
+      TARGET_WORKFLOW: ${{ github.event.workflow_run.name || 'Manual inspection' }}
+      TARGET_BRANCH: ${{ github.event.workflow_run.head_branch || 'manual' }}
+      TARGET_CONCLUSION: ${{ github.event.workflow_run.conclusion || 'manual' }}
+      TARGET_ATTEMPT: ${{ github.event.workflow_run.run_attempt || 'unknown' }}
+
+    steps:
+      - name: Checkout trusted default branch
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Download triggering workflow logs
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/kdp-inspector"
+          gh run view "$TARGET_RUN_ID" --repo "$GITHUB_REPOSITORY" --log \
+            > "$RUNNER_TEMP/kdp-inspector/failed-run.log"
+          test -s "$RUNNER_TEMP/kdp-inspector/failed-run.log"
+
+      - name: Classify errors and write diagnostic report
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/kdp_inspector.py \
+            --log-file "$RUNNER_TEMP/kdp-inspector/failed-run.log" \
+            --output-dir diagnostics/latest \
+            --repository "$GITHUB_REPOSITORY" \
+            --run-id "$TARGET_RUN_ID" \
+            --run-attempt "$TARGET_ATTEMPT" \
+            --workflow "$TARGET_WORKFLOW" \
+            --head-branch "$TARGET_BRANCH" \
+            --conclusion "$TARGET_CONCLUSION"
+          cat diagnostics/latest/report.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Apply registered safe repairs
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/repair_engine.py \
+            --repo-root . \
+            --rules config/auto_fix_rules.json \
+            --output diagnostics/latest/repairs.json
+          cat diagnostics/latest/repairs.json >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Run regression tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m unittest discover -s tests -v
+
+      - name: Create pull request for verified repairs
+        if: success()
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git diff --quiet; then
+            echo "No registered repair changed repository files."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          repair_branch="autofix/kdp-run-${TARGET_RUN_ID}"
+          git switch -c "$repair_branch"
+          git add config scripts tests
+          git commit -m "fix: apply verified KDP repair for run ${TARGET_RUN_ID}"
+          git push origin "$repair_branch"
+          gh pr create \
+            --repo "$GITHUB_REPOSITORY" \
+            --base main \
+            --head "$repair_branch" \
+            --title "Automated KDP repair for workflow run ${TARGET_RUN_ID}" \
+            --body "This pull request contains only pre-registered, exact-match repairs from config/auto_fix_rules.json. The repository regression test suite passed before the PR was created. Review the diagnostic artifact and inspect the diff before merging."
+
+      - name: Upload diagnostic reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: kdp-diagnostics-${{ env.TARGET_RUN_ID }}
+          path: diagnostics/latest/
+          if-no-files-found: warn
+          retention-days: 14
