@@ -50,7 +50,7 @@ jobs:
 
       - name: Generate the 12-design review set
         env:
-          THEME: ${{ inputs.theme }}
+          THEME: ${{ inputs.theme || 'fruit' }}
         run: |
           python - <<'PY'
           import os
@@ -71,7 +71,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: artwork-quality-${{ inputs.theme }}-${{ github.run_number }}
+          name: artwork-quality-${{ inputs.theme || 'fruit' }}-${{ github.run_number }}
           path: |
             build/artwork-quality-report.json
             build/artwork-contact-sheet.png
