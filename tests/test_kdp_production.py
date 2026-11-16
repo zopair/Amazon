@@ -81,6 +81,9 @@ class SampleBuildTests(unittest.TestCase):
             self.assertEqual(report["interior"]["illustration_pages"], 12)
             self.assertEqual(report["interior"]["blank_reverse_pages"], 12)
             self.assertTrue(report["cover"]["fonts_embedded"])
+            self.assertTrue(report["interior"]["metadata_absent"])
+            self.assertTrue(report["cover"]["metadata_absent"])
+            self.assertTrue(report["cover"]["cmyk_colors"])
 
 
 if __name__ == "__main__":
