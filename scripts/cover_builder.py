@@ -132,6 +132,10 @@ def build_cover(meta: dict, output_path: str | Path) -> Path:
     pdf.setFillColor(_cmyk("#263238"))
     pdf.setFont("KdpVera-Bold",12)
     pdf.drawCentredString(front_center,bleed+45,"BIG & EASY PICTURES  •  AGES 4–8")
+    author=str(meta.get("author") or "").strip()
+    if author:
+        pdf.setFont("KdpVera",10)
+        pdf.drawCentredString(front_center,bleed+25,author)
     # No spine lettering: sample has a narrow spine and KDP's fold tolerance must be respected.
     pdf.showPage()
     pdf.save()
