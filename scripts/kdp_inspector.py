@@ -12,7 +12,6 @@ from typing import Any
 
 MAX_LOG_BYTES = 8 * 1024 * 1024
 PATTERNS = [
-    ("python_traceback", re.compile(r"Traceback \(most recent call last\):|^\s*[A-Za-z_][\w.]*Error:", re.I), "python"),
     ("missing_dependency", re.compile(r"ModuleNotFoundError|ImportError:", re.I), "dependency"),
     ("missing_file", re.compile(r"FileNotFoundError|No such file or directory", re.I), "filesystem"),
     ("permission", re.compile(r"PermissionError|Permission denied|EACCES", re.I), "permissions"),
@@ -20,6 +19,7 @@ PATTERNS = [
     ("pdf_failure", re.compile(r"\b(PDF|pypdf|reportlab|fitz)\b.*\b(error|failed|invalid|exception)\b", re.I), "pdf"),
     ("network_transient", re.compile(r"timed? ?out|connection reset|temporary failure|502 Bad Gateway|503 Service Unavailable|429 Too Many Requests", re.I), "transient"),
     ("resource_exhaustion", re.compile(r"No space left on device|out of memory|OOMKilled|memory limit", re.I), "resources"),
+    ("python_traceback", re.compile(r"Traceback \(most recent call last\):|^\s*[A-Za-z_][\w.]*Error:", re.I), "python"),
     ("workflow_failure", re.compile(r"Process completed with exit code [1-9]\d*|Error: Process completed", re.I), "workflow"),
     ("generic_error", re.compile(r"(^|\s)(ERROR|FATAL|Error:)(\s|:)", re.I), "unknown"),
 ]
@@ -67,10 +67,11 @@ def classify_log(log_text: str) -> dict[str, Any]:
             unique.append(item)
     categories = Counter(item["category"] for item in unique)
     primary = "none" if not unique else unique[0]["category"]
-    priority = {"permissions", "resources", "pdf", "validation"}
+    priority = {"dependency", "filesystem", "permissions", "resources", "pdf", "validation"}
     if any(item["category"] in priority for item in unique):
         primary = next(item["category"] for item in unique if item["category"] in priority)
-    retryable = bool(unique) and all(item["category"] == "transient" for item in unique)
+    retry_categories = {"transient", "workflow"}
+    retryable = any(item["category"] == "transient" for item in unique) and all(item["category"] in retry_categories for item in unique)
     return {
         "status": "failure_detected" if unique else "no_recognized_error",
         "primary_category": primary, "retryable_candidate": retryable,
