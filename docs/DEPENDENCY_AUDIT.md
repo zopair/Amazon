@@ -4,7 +4,7 @@ Checked: 2026-11-16. Versions are pinned to avoid unreviewed drift. Recheck GitH
 
 | Package | Pinned version | Upstream source | License | Review result |
 |---|---:|---|---|---|
-| Pillow | 12.3.0 | https://github.com/python-pillow/Pillow | MIT-CMU (Pillow documentation describes the historical HPND lineage) | Selected because 12.3.0 includes fixes for multiple 2026 security issues affecting earlier 12.x releases. |
+| Pillow | 12.3.0 | https://github.com/python-pillow/Pillow | MIT-CMU | Selected because 12.3.0 includes fixes for multiple 2026 security issues affecting earlier 12.x releases. |
 | ReportLab | 5.0.1 | https://github.com/MrBitBucket/reportlab-mirror | BSD | Selected above the 4.4.10 security-fix release; 5.0.1 is the current upstream release observed in the source mirror. |
 | pypdf | 7.1.0 | https://github.com/py-pdf/pypdf | BSD-3-Clause | Selected after rejecting 5.9.0: the 6.21.x and 7.0.x releases contain multiple security/resource-exhaustion fixes; 7.1.0 is the latest signed release observed on 2026-11-16. |
 
