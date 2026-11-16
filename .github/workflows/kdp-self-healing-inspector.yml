@@ -92,18 +92,16 @@ jobs:
           existing="$(gh issue list --repo "$GITHUB_REPOSITORY" --state open --search "in:title $TARGET_RUN_ID" --json number --jq 'length')"
           if [[ "$existing" == "0" ]]; then
             category="$(python -c 'import json; print(json.load(open("diagnostics/latest/report.json", encoding="utf-8")).get("primary_category", "unknown"))')"
-            body="$(cat <<EOF
-The workflow failed and no safe, registered deterministic repair was applicable.
-
-Workflow run ID: $TARGET_RUN_ID
-Workflow: $TARGET_WORKFLOW
-Branch: $TARGET_BRANCH
-Failure category: $category
-Run logs and diagnostic artifact: https://github.com/$GITHUB_REPOSITORY/actions/runs/$TARGET_RUN_ID
-
-Review the logs and diagnostic report, fix the underlying issue, and run tests first. When you explicitly approve retrying the failed jobs, add the label approved-to-resume to this issue. The intervention queue checks approvals every six hours. Do not add that label until the cause has been addressed.
-EOF
-)"
+            body="$(printf '%s\n' \
+              'The workflow failed and no safe, registered deterministic repair was applicable.' \
+              '' \
+              "Workflow run ID: $TARGET_RUN_ID" \
+              "Workflow: $TARGET_WORKFLOW" \
+              "Branch: $TARGET_BRANCH" \
+              "Failure category: $category" \
+              "Run logs and diagnostic artifact: https://github.com/$GITHUB_REPOSITORY/actions/runs/$TARGET_RUN_ID" \
+              '' \
+              'Review the logs and diagnostic report, fix the underlying issue, and run tests first. When you explicitly approve retrying the failed jobs, add the label approved-to-resume to this issue. The intervention queue checks approvals every six hours. Do not add that label until the cause has been addressed.')"
             gh issue create --repo "$GITHUB_REPOSITORY" \
               --title "Human intervention required: $TARGET_WORKFLOW run $TARGET_RUN_ID" \
               --label human-intervention \
