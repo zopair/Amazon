@@ -63,5 +63,7 @@ jobs:
             build/output/interior.pdf
             build/output/cover.pdf
             build/output/validation-report.json
+            build/output/sample-preview.png
+            build/output/manifest.json
           if-no-files-found: error
           retention-days: 14
