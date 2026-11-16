@@ -11,6 +11,7 @@ from scripts.art_generator import generate_artwork
 from scripts.interior_builder import build_interior
 from scripts.cover_builder import build_cover
 from scripts.validator import validate_book
+from scripts.pdf_sanitizer import strip_pdf_metadata
 
 def _sha256(path: Path) -> str:
     digest=hashlib.sha256()
@@ -48,6 +49,8 @@ def run(config_path: Path, output_dir: Path) -> dict:
     output_dir.mkdir(parents=True,exist_ok=True)
     build_interior(meta,images,interior)
     build_cover(meta,cover)
+    strip_pdf_metadata(interior)
+    strip_pdf_metadata(cover)
     report=validate_book(interior,cover,meta)
     report_path.write_text(json.dumps(report,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
     _make_preview(images,preview)
