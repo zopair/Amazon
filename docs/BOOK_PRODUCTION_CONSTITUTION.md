@@ -30,13 +30,13 @@ This constitution is a release gate, not optional creative advice.
 ## Book engineering requirements
 
 - Trim: 8.5 × 11 in.
-- Sample: 24 pages / 12 designs. Production target: 100 pages / 50 designs.
+- Sample: 24 pages / 12 designs. Production target: 100 pages / 50 designs. Never exceed KDP's 590-page maximum for 8.5 × 11 in black-ink / white-paper paperbacks.
 - Black ink on white paper.
 - No interior bleed for this series profile.
 - Inside margin: 0.375 in for the 24–150 page band; outside/top/bottom no less than 0.25 in. This project uses 0.375 in all around.
-- Full wrap cover with 0.125 in bleed on each outside edge.
+- Full wrap cover with 0.125 in bleed on top, bottom, and both outer edges; CMYK cover colors; embedded fonts; no document metadata.
 - White-paper black-and-white spine formula: page count × 0.002252 in.
-- No spine text by default; recalculate and use the official cover template whenever specifications change.
+- No spine text by default; recalculate and use the official cover template whenever specifications change. Keep a 2 × 1.2 in clear barcode area at least 0.25 in from the spine and trim.
 - Embed all cover fonts; flatten all artwork; no encryption, annotations, crop marks, or transparency.
 
 ## Metadata and publishing safety
