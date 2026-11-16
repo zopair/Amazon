@@ -63,6 +63,24 @@ class ThemeSupportTests(unittest.TestCase):
                     self.assertGreaterEqual(image.info["dpi"][0],299)
 
 class SampleBuildTests(unittest.TestCase):
+    def test_validator_rejects_reused_illustrations(self):
+        meta = json.loads(Path("config/book_meta.json").read_text(encoding="utf-8"))
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            images = generate_artwork("fruit",12,root/"images",dpi=300,line_width_pt=2.4)
+            repeated = list(images)
+            repeated[1] = images[0]
+            interior = root/"interior.pdf"
+            cover = root/"cover.pdf"
+            build_interior(meta,repeated,interior)
+            build_cover(meta,cover)
+            from scripts.pdf_sanitizer import strip_pdf_metadata
+            strip_pdf_metadata(interior)
+            strip_pdf_metadata(cover)
+            report=validate_book(interior,cover,meta)
+            self.assertEqual(report["status"],"FAIL")
+            self.assertTrue(any("reuses an identical illustration" in error for error in report["errors"]))
+
     def test_builds_24_page_single_sided_sample_and_cover(self):
         meta = json.loads(Path("config/book_meta.json").read_text(encoding="utf-8"))
         with tempfile.TemporaryDirectory() as tmp:
