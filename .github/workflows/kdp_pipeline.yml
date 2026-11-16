@@ -8,6 +8,16 @@ on:
         required: true
         default: config/book_meta.json
         type: string
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "config/**"
+      - "scripts/**"
+      - "assets/**"
+      - "tests/**"
+      - "requirements.txt"
+      - ".github/workflows/kdp_pipeline.yml"
   push:
     branches:
       - main
