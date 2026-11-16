@@ -35,6 +35,10 @@ def _make_preview(images: list[Path], output: Path) -> None:
     sheet.save(output,format="PNG",optimize=True)
 
 def run(config_path: Path, output_dir: Path) -> dict:
+    config_root=Path("config").resolve()
+    config_path=config_path.resolve()
+    if config_root not in config_path.parents or not config_path.is_file():
+        raise ValueError("book configuration must be an existing JSON file inside the repository config/ directory")
     meta=json.loads(config_path.read_text(encoding="utf-8"))
     count=int(meta["interior"]["page_count"])//2
     images=load_artwork(
