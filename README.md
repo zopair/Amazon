@@ -13,7 +13,7 @@ Automated, testable production of original children's coloring-book paperbacks f
 - Line art: 2.4 pt project target; never below KDP's 0.75 pt minimum.
 - Sample: 24 pages / 12 illustrations.
 - Standard production target: 100 pages / 50 illustrations.
-- Full-wrap cover: calculated from selected paper, page count, trim, and 0.125 in outside bleed.
+- Full-wrap cover: calculated from selected paper, page count, trim, and 0.125 in outside bleed; CMYK vector colors, embedded fonts, and no PDF metadata.
 - No automatic publishing. Owner approval and KDP Print Previewer review are mandatory.
 
 ## Main components
@@ -23,6 +23,7 @@ Automated, testable production of original children's coloring-book paperbacks f
 - config/production_policy.json: machine-readable production constitution.
 - docs/BOOK_PRODUCTION_CONSTITUTION.md: mandatory originality, design, and release rules.
 - docs/KDP_TECHNICAL_SPECIFICATION.md: official requirements vs market observations.
+- docs/DEPENDENCY_AUDIT.md: pinned GitHub-sourced libraries, licenses, and security review.
 - scripts/art_generator.py: creates original, deterministic fruit line art.
 - scripts/interior_builder.py: builds the single-sided interior PDF.
 - scripts/cover_calculator.py: computes paper-specific spine and full-wrap dimensions.
