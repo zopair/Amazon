@@ -12,7 +12,7 @@ Automated, testable production of original children's coloring-book paperbacks f
 - Raster artwork: at least 300 DPI.
 - Line art: 2.4 pt project target; never below KDP's 0.75 pt minimum.
 - Sample: 24 pages / 12 illustrations.
-- Standard production target: 100 pages / 50 illustrations.
+- Standard production target: 100 pages / 50 illustrations. The production profile requires 50 approved, distinct original assets; the built-in generator will not repeat its 12 review motifs to pad a book.
 - Full-wrap cover: calculated from selected paper, page count, trim, and 0.125 in outside bleed; CMYK vector colors, embedded fonts, and no PDF metadata.
 - No automatic publishing. Owner approval and KDP Print Previewer review are mandatory.
 
@@ -20,11 +20,13 @@ Automated, testable production of original children's coloring-book paperbacks f
 
 - config/book_meta.json: exact sample book configuration.
 - config/series_defaults.json: standard 100-page series target.
+- config/themes.json and config/series_templates/: six theme definitions and ready-to-edit 24-page templates.
 - config/production_policy.json: machine-readable production constitution.
 - docs/BOOK_PRODUCTION_CONSTITUTION.md: mandatory originality, design, and release rules.
 - docs/KDP_TECHNICAL_SPECIFICATION.md: official requirements vs market observations.
 - docs/DEPENDENCY_AUDIT.md: pinned GitHub-sourced libraries, licenses, and security review.
-- scripts/art_generator.py: creates original, deterministic fruit line art.
+- scripts/art_generator.py and scripts/theme_art.py: create original, deterministic line art for all six requested themes.
+- scripts/artwork_loader.py: loads rights-cleared assets, flattens them to pure black/white, and rejects exact duplicates.
 - scripts/interior_builder.py: builds the single-sided interior PDF.
 - scripts/cover_calculator.py: computes paper-specific spine and full-wrap dimensions.
 - scripts/cover_builder.py: builds a full-wrap PDF with embedded fonts.
