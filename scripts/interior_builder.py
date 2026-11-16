@@ -31,8 +31,6 @@ def build_interior(meta: dict, image_paths: list[str | Path], output_path: str |
     output = Path(output_path)
     output.parent.mkdir(parents=True, exist_ok=True)
     pdf = canvas.Canvas(str(output), pagesize=(page_w, page_h), pageCompression=1, invariant=1)
-    pdf.setTitle(str(meta["title"]) + " — Interior")
-    pdf.setAuthor(str(meta.get("author") or ""))
     for index, image_path in enumerate(image_paths):
         path = Path(image_path)
         if not path.is_file():
