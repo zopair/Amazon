@@ -76,6 +76,19 @@ jobs:
             --conclusion "$TARGET_CONCLUSION"
           cat diagnostics/latest/report.md >> "$GITHUB_STEP_SUMMARY"
 
+      - name: Retry only classified transient failures (maximum two attempts)
+        if: github.event_name == 'workflow_run'
+        shell: bash
+        run: |
+          set -euo pipefail
+          retryable="$(python -c 'import json; print(str(json.load(open("diagnostics/latest/report.json", encoding="utf-8")).get("retryable_candidate", False)).lower())')"
+          if [[ "$retryable" == "true" && "$TARGET_ATTEMPT" =~ ^[0-9]+$ ]] && (( TARGET_ATTEMPT < 2 )); then
+            gh run rerun "$TARGET_RUN_ID" --failed --repo "$GITHUB_REPOSITORY"
+            echo "A single bounded retry was requested for a classified transient failure."
+          else
+            echo "No automatic retry: failure is not safely classified as transient or retry limit reached."
+          fi
+
       - name: Apply registered safe repairs
         shell: bash
         run: |
@@ -90,7 +103,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          python -m unittest discover -s tests -v
+          python -m unittest discover -s tests -t . -v
 
       - name: Create pull request for verified repairs
         if: success()
