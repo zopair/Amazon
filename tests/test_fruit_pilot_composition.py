@@ -8,6 +8,20 @@ from scripts.art_generator import generate_artwork
 
 
 class FruitPilotCompositionTests(unittest.TestCase):
+
+    def test_complete_fruit_pilot_passes_the_declared_composition_gate(self):
+        from scripts.artwork_quality import audit_artwork_directory
+
+        with tempfile.TemporaryDirectory() as tmp:
+            generate_artwork("fruit", 12, tmp, dpi=300, line_width_pt=2.4)
+            report = audit_artwork_directory(
+                tmp, Path("config/artwork_generation_spec.json")
+            )
+            self.assertEqual(report["status"], "PASS", report)
+            self.assertEqual(report["summary"]["asset_count"], 12)
+            self.assertEqual(report["summary"]["error_count"], 0)
+            self.assertEqual(report["summary"]["warning_count"], 0)
+
     def test_banana_and_watermelon_use_larger_readable_compositions(self):
         with tempfile.TemporaryDirectory() as tmp:
             paths = generate_artwork("fruit", 12, tmp, dpi=300, line_width_pt=2.4)
