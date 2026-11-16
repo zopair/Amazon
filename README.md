@@ -28,6 +28,8 @@ Automated, testable production of original children's coloring-book paperbacks f
 - docs/DEPENDENCY_AUDIT.md: pinned GitHub-sourced libraries, licenses, and security review.
 - scripts/art_generator.py and scripts/theme_art.py: create original, deterministic line art for all six requested themes.
 - scripts/artwork_loader.py: loads rights-cleared assets, flattens them to pure black/white, and rejects exact duplicates.
+- scripts/artwork_quality.py: audits artwork dimensions, DPI, binary palette, transparency, safe inset, occupancy, and exact/pixel duplicates; produces a JSON report and contact sheet without granting human approval.
+- docs/ARTWORK_QUALITY_GATE.md: quality-gate contract and manual audit workflow.
 - scripts/interior_builder.py: builds the single-sided interior PDF.
 - scripts/cover_calculator.py: computes paper-specific spine and full-wrap dimensions.
 - scripts/cover_builder.py: builds a full-wrap PDF with embedded fonts.
