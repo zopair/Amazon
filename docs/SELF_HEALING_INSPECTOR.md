@@ -33,7 +33,7 @@ A new repair rule should be added only after the failure has been reproduced and
 
 ## Monitoring scope and limitations
 
-The workflow listens for the named KDP Production Pipeline workflow on main. It is event-driven, not an always-on daemon. GitHub Actions must be enabled, and the repository must contain a production workflow with that exact display name.
+The workflow listens for the named KDP Production Pipeline and Inspector Tests workflows on main. It is event-driven, not an always-on daemon. GitHub Actions must be enabled. The inspector test workflow is included in this change; production monitoring begins when the KDP Production Pipeline workflow with that exact display name is added to main.
 
 The first version inspects failed workflow logs and can apply registered deterministic repairs. It does not claim to autonomously solve arbitrary programming defects. A future model-assisted repair stage would require an explicitly approved model provider, credential, cost limit, and review policy.
 
