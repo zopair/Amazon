@@ -15,6 +15,7 @@ class InterventionControllerTests(unittest.TestCase):
         from scripts.intervention_controller import validate_run_target
         valid={"status":"completed","conclusion":"failure","headBranch":"main","workflowName":"KDP Production Pipeline"}
         self.assertIsNone(validate_run_target(valid))
+        self.assertIsNone(validate_run_target({"status":"completed","conclusion":"failure","headBranch":"main","name":"Inspector Tests"}))
         self.assertIsNotNone(validate_run_target({**valid,"conclusion":"success"}))
         self.assertIsNotNone(validate_run_target({**valid,"headBranch":"feature/test"}))
         self.assertIsNotNone(validate_run_target({**valid,"workflowName":"Unrelated Workflow"}))
