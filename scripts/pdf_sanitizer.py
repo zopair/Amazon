@@ -14,16 +14,17 @@ def strip_pdf_metadata(pdf_path: str | Path) -> Path:
         raise ValueError("encrypted PDFs are not accepted by this production profile")
     writer=PdfWriter()
     writer.append_pages_from_reader(reader)
-    # An empty Info dictionary removes title/author/producer/creator metadata values.
-    writer.add_metadata({})
+    # Remove both standard document-information metadata and XMP metadata streams.
+    writer.metadata=None
+    writer.xmp_metadata=None
     fd,temp_name=tempfile.mkstemp(prefix=".kdp-sanitized-",suffix=".pdf",dir=str(path.parent))
     os.close(fd)
     try:
         with open(temp_name,"wb") as stream:
             writer.write(stream)
         check=PdfReader(temp_name,strict=True)
-        if any((check.metadata or {}).values()):
-            raise ValueError("PDF metadata values remain after sanitization")
+        if check.metadata is not None or check.xmp_metadata is not None:
+            raise ValueError("PDF metadata values or XMP metadata remain after sanitization")
         os.replace(temp_name,path)
     finally:
         if os.path.exists(temp_name):
