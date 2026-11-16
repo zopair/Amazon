@@ -26,9 +26,24 @@ def validate_rule(rule: dict[str, Any], root: Path) -> tuple[Path | None, str | 
     rel = PurePosixPath(str(rule["path"]))
     if rel.is_absolute() or ".." in rel.parts or not str(rel).startswith(ALLOWED_PREFIXES):
         return None, "path is outside the repair allowlist"
+    if not isinstance(rule["before"], str) or not isinstance(rule["after"], str):
+        return None, "before and after values must be strings"
+    if not isinstance(rule["expected_sha256"], str) or len(rule["expected_sha256"]) != 64:
+        return None, "expected_sha256 must be a 64-character SHA-256 hex digest"
+    try:
+        int(rule["expected_sha256"], 16)
+    except ValueError:
+        return None, "expected_sha256 must be hexadecimal"
+    root = root.resolve()
     path = root.joinpath(*rel.parts)
-    if path.is_symlink() or not path.is_file():
-        return None, "target must be an existing regular file (symlinks are rejected)"
+    cursor = path
+    while cursor != root:
+        if cursor.is_symlink():
+            return None, "symbolic links in the target path are rejected"
+        cursor = cursor.parent
+    resolved = path.resolve()
+    if root not in resolved.parents or not resolved.is_file():
+        return None, "target must be a regular file inside the repository root"
     if path.stat().st_size > MAX_FILE_BYTES:
         return None, "target file exceeds size limit"
     if sha256_file(path) != rule["expected_sha256"]:
@@ -51,6 +66,8 @@ def apply_rules(root: Path, rules_file: Path, dry_run: bool = False) -> dict[str
     data = json.loads(rules_file.read_text(encoding="utf-8"))
     if data.get("version") != 1 or not isinstance(data.get("rules"), list):
         raise ValueError("repair rules must have version=1 and a rules array")
+    if len(data["rules"]) > 100:
+        raise ValueError("repair registry exceeds the 100-rule safety limit")
     results: list[dict[str, Any]] = []
     planned_paths: set[Path] = set()
     for rule in data["rules"]:
