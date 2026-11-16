@@ -6,10 +6,6 @@ The repository-owned `scripts.artwork_quality` tool performs deterministic check
 
 ## Run locally
 
-```bash
-python -m scripts.art_generator
-```
-
 Generate a 12-design pilot using the existing generator:
 
 ```bash
@@ -31,7 +27,7 @@ The CLI accepts `--spec`, `--report`, `--contact-sheet`, and `--strict`. The def
 
 ## Approval boundary
 
-A technical `PASS` is not a visual or commercial approval. Every asset remains `human_review: PENDING`; the tool never grants approval, judges originality, proves legal rights, or determines the publisher's KDP AI disclosure. Pixel-level duplicate checks do not detect near-duplicates. The 50-artwork / 100-page release remains blocked until the required distinct assets receive human approval.
+A technical `PASS` is not a visual or commercial approval. The report explicitly lists effective stroke width, contour closure, thumbnail recognition, originality, rights provenance, and near-duplicate detection as unverified checks. Every asset remains `human_review: PENDING`; the tool never grants approval, judges originality, proves legal rights, or determines the publisher's KDP AI disclosure. Pixel-level duplicate checks do not detect near-duplicates. The 50-artwork / 100-page release remains blocked until the required distinct assets receive human approval.
 
 ## Workflow
 
