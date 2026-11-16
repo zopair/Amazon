@@ -11,6 +11,14 @@ class InterventionControllerTests(unittest.TestCase):
         ]
         self.assertEqual(approved_run_ids(issues),[(2,23456)])
 
+    def test_only_failed_runs_on_main_from_allowed_workflows_are_resumable(self):
+        from scripts.intervention_controller import validate_run_target
+        valid={"status":"completed","conclusion":"failure","headBranch":"main","workflowName":"KDP Production Pipeline"}
+        self.assertIsNone(validate_run_target(valid))
+        self.assertIsNotNone(validate_run_target({**valid,"conclusion":"success"}))
+        self.assertIsNotNone(validate_run_target({**valid,"headBranch":"feature/test"}))
+        self.assertIsNotNone(validate_run_target({**valid,"workflowName":"Unrelated Workflow"}))
+
     def test_manual_resume_requires_explicit_owner_note_and_numeric_run_id(self):
         self.assertIsNone(validate_manual_resume("12345","I approve retrying run 12345."))
         self.assertIsNotNone(validate_manual_resume("","I approve"))
