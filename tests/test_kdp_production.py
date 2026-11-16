@@ -39,6 +39,12 @@ class ProductionConfigTests(unittest.TestCase):
         broken["interior"]["single_sided"] = False
         self.assertTrue(any("single_sided" in error for error in validate_book_config(broken)))
 
+    def test_rejects_page_count_above_official_large_trim_maximum(self):
+        broken = json.loads(json.dumps(self.meta))
+        broken["interior"]["page_count"] = 592
+        broken["content"]["illustration_count"] = 296
+        self.assertTrue(any("maximum" in error for error in validate_book_config(broken)))
+
     def test_rejects_line_width_below_kdp_minimum(self):
         broken = json.loads(json.dumps(self.meta))
         broken["interior"]["line_width_pt"] = 0.5
@@ -61,6 +67,13 @@ class SampleBuildTests(unittest.TestCase):
             cover = root / "cover.pdf"
             build_interior(meta, images, interior)
             build_cover(meta, cover)
+
+            from pypdf import PdfReader
+            from scripts.pdf_sanitizer import strip_pdf_metadata
+            strip_pdf_metadata(interior)
+            strip_pdf_metadata(cover)
+            self.assertFalse(any((PdfReader(interior).metadata or {}).values()))
+            self.assertFalse(any((PdfReader(cover).metadata or {}).values()))
 
             report = validate_book(interior, cover, meta)
             self.assertEqual(report["status"], "PASS", report["errors"])
