@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "book_id": "flowers-sample",
+  "title": "Little Flower Garden",
+  "subtitle": "12 Big & Easy Flower Coloring Designs for Kids Ages 4-8",
+  "author": "",
+  "series_name": "Everyday Coloring Library",
+  "series_volume": 1,
+  "audience": {
+    "minimum_age": 4,
+    "maximum_age": 8,
+    "language": "en"
+  },
+  "trim": {
+    "width_in": 8.5,
+    "height_in": 11,
+    "bleed_in": 0.125,
+    "interior_bleed": false,
+    "cover_bleed": true
+  },
+  "interior": {
+    "ink": "black",
+    "paper": "white",
+    "page_count": 24,
+    "single_sided": true,
+    "blank_reverse_pages": true,
+    "illustration_page_parity": "odd",
+    "min_dpi": 300,
+    "line_width_pt": 2.4,
+    "min_line_width_pt": 0.75,
+    "inside_margin_in": 0.375,
+    "outside_margin_in": 0.375,
+    "top_margin_in": 0.375,
+    "bottom_margin_in": 0.375
+  },
+  "cover": {
+    "finish_recommendation": "matte",
+    "include_spine_text": false,
+    "reserve_barcode_area": true,
+    "barcode_area_width_in": 2,
+    "barcode_area_height_in": 1.2
+  },
+  "content": {
+    "theme": "flowers",
+    "image_directory": "assets/images",
+    "generated_image_directory": "build/images",
+    "illustration_count": 12,
+    "art_style": "original bold closed outlines, simple large shapes, no grayscale, no shading, no gradients, no text inside artwork"
+  },
+  "output": {
+    "interior_pdf": "build/output/flowers-interior.pdf",
+    "cover_pdf": "build/output/flowers-cover.pdf",
+    "report_json": "build/output/validation-report.json"
+  },
+  "publishing": {
+    "kdp_ai_generated_content_disclosure_required_if_ai_generated": true,
+    "do_not_publish_automatically": true
+  }
+}
