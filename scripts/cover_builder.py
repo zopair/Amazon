@@ -116,7 +116,7 @@ def build_cover(meta: dict, output_path: str | Path) -> Path:
         pdf.rect(back_x+trim_w-bw-24,bleed+20,bw,bh,stroke=0,fill=1)
     # Front cover composition.
     front_center = front_x + trim_w/2
-    pdf.setFillColor(colors.HexColor("#263238"))
+    pdf.setFillColor(_cmyk("#263238"))
     pdf.setFont("KdpVera-Bold",34)
     pdf.drawCentredString(front_center,height-112,str(meta["title"]).upper())
     pdf.setFont("KdpVera",14)
@@ -129,7 +129,7 @@ def build_cover(meta: dict, output_path: str | Path) -> Path:
     ]
     for i,(cx,cy,radius) in enumerate(positions):
         _fruit_icon(pdf,cx,cy,radius,_cmyk(palette[i%len(palette)]),i)
-    pdf.setFillColor(colors.HexColor("#263238"))
+    pdf.setFillColor(_cmyk("#263238"))
     pdf.setFont("KdpVera-Bold",12)
     pdf.drawCentredString(front_center,bleed+45,"BIG & EASY PICTURES  •  AGES 4–8")
     # No spine lettering: sample has a narrow spine and KDP's fold tolerance must be respected.
