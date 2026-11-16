@@ -1,6 +1,7 @@
 """Structural, geometry, resolution, blank-verso, and font checks for KDP PDFs."""
 from __future__ import annotations
 import math
+import hashlib
 from pathlib import Path
 from typing import Any
 from pypdf import PdfReader
@@ -56,6 +57,7 @@ def _image_placements(page, reader):
                     "width_pt":width_pt,
                     "height_pt":height_pt,
                     "has_soft_mask":bool(obj.get("/SMask") or obj.get("/Mask")),
+                    "content_sha256":hashlib.sha256(obj.get_data()).hexdigest(),
                 })
     return placements
 
@@ -187,6 +189,7 @@ def validate_book(interior_pdf: str|Path, cover_pdf: str|Path, meta: dict[str,An
         art_count=0
         blank_count=0
         min_dpi=10_000.0
+        seen_art_hashes=set()
         page_results=[]
         for page_index,page in enumerate(interior.pages):
             page_number=page_index+1
@@ -200,6 +203,9 @@ def validate_book(interior_pdf: str|Path, cover_pdf: str|Path, meta: dict[str,An
                 if len(placements)!=1:
                     errors.append(f"art page {page_number} must contain exactly one raster illustration; found {len(placements)}")
                 for image in placements:
+                    if image["content_sha256"] in seen_art_hashes:
+                        errors.append(f"art page {page_number} reuses an identical illustration already used earlier in this volume")
+                    seen_art_hashes.add(image["content_sha256"])
                     if image["has_soft_mask"]:
                         errors.append(f"art page {page_number} contains transparency or a soft mask")
                     if image["width_pt"]<=0 or image["height_pt"]<=0:
