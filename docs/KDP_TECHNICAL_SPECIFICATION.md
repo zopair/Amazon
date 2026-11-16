@@ -84,7 +84,7 @@ Before creating or accepting any page:
 - Use closed contours, bold lines, large open coloring regions, and simple age-appropriate shapes.
 - Avoid tiny details, confusing overlaps, cropped subjects, and accidental tangencies.
 - Keep one coherent dominant subject per page.
-- Reject duplicate or near-duplicate pages within a volume.
+- Reject duplicate or near-duplicate pages within a volume and avoid excessively reused/recycled content within or across books; KDP's Content Guidelines treat this as a poor-customer-experience issue. The built-in generator is limited to 12 distinct review motifs per theme. A 100-page / 50-design volume must supply 50 approved, distinct original assets; the pipeline refuses to pad the volume with repeated motifs.
 - Keep every even-numbered reverse page completely blank: no art, text, folio, watermark, pattern, logo, or hidden objects.
 - Do not invent factual or educational claims. Verify any factual label from a suitable authoritative source.
 - Keep title, subtitle, series, author, cover, and KDP metadata consistent.
@@ -121,7 +121,7 @@ A production book cannot be marked ready for publication until:
 - Create a Paperback Cover: https://kdp.amazon.com/en_US/help/topic/G201953020
 - Set Trim Size, Bleed, and Margins: https://kdp.amazon.com/en_US/help/topic/GVBQ3CMEQW3W2VL6
 - Save Your Manuscript File: https://kdp.amazon.com/en_US/help/topic/G202145060
-- Content Guidelines (including AI-generated disclosure): https://kdp.amazon.com/en_US/help/topic/G200635600
+- Content Guidelines (including IP, reused-content, and AI-generated disclosure rules): https://kdp.amazon.com/en_US/help/topic/G200635600
 - Metadata Guidelines: https://kdp.amazon.com/en_US/help/topic/G201097560
 - Publishing Public Domain Content: https://kdp.amazon.com/en_US/help/topic/G200743940
 - Keywords: https://kdp.amazon.com/en_US/help/topic/G201743260
