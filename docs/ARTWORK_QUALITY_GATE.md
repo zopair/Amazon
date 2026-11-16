@@ -31,4 +31,4 @@ A technical `PASS` is not a visual or commercial approval. The report explicitly
 
 ## Workflow
 
-Run **Actions → Artwork Quality Audit → Run workflow** and select a theme. The workflow is manual-only, generates 12 pilot files on the ephemeral runner, and uploads the report/contact sheet for 14 days. It does not call external APIs, use AI credits, or modify production assets.
+The workflow runs on pull requests that change the artwork generator, quality auditor, specification, or this workflow; it can also be started manually from **Actions → Artwork Quality Audit → Run workflow**. Each run generates exactly 12 pilot files on the ephemeral runner and uploads the report/contact sheet for 14 days. It does not call external APIs, use AI credits, or modify production assets.
