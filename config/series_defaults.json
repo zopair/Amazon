@@ -3,6 +3,8 @@
   "standard_trim": {"width_in": 8.5, "height_in": 11.0},
   "standard_page_count": 100,
   "standard_design_count": 50,
+  "built_in_distinct_motifs_per_theme": 12,
+  "long_volume_asset_rule": "A 100-page book requires exactly 50 approved, distinct original assets in assets/images/<theme>/. The generator never repeats 12 motifs to pad a longer book.",
   "single_sided": true,
   "blank_reverse_pages": true,
   "black_ink": true,
