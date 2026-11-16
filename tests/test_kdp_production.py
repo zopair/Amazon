@@ -51,6 +51,17 @@ class ProductionConfigTests(unittest.TestCase):
         self.assertTrue(any("line_width_pt" in error for error in validate_book_config(broken)))
 
 
+class ThemeSupportTests(unittest.TestCase):
+    def test_all_requested_general_series_themes_generate_300_dpi_art(self):
+        from PIL import Image
+        with tempfile.TemporaryDirectory() as tmp:
+            for theme in ["flowers","toys","birds","animals","professions"]:
+                paths=generate_artwork(theme,1,Path(tmp)/theme,dpi=300,line_width_pt=2.4)
+                self.assertEqual(len(paths),1)
+                with Image.open(paths[0]) as image:
+                    self.assertEqual(image.size,(2550,3300))
+                    self.assertGreaterEqual(image.info["dpi"][0],299)
+
 class SampleBuildTests(unittest.TestCase):
     def test_builds_24_page_single_sided_sample_and_cover(self):
         meta = json.loads(Path("config/book_meta.json").read_text(encoding="utf-8"))
