@@ -26,6 +26,9 @@ PATTERNS = [
 SECRET_PATTERNS = [
     re.compile(r"(?i)(gh[pousr]_[A-Za-z0-9_]{20,})"),
     re.compile(r"(?i)(github_pat_[A-Za-z0-9_]{20,})"),
+    re.compile(r"\bAKIA[0-9A-Z]{16}\b"),
+    re.compile(r"(?i)(xox[baprs]-[A-Za-z0-9-]{10,})"),
+    re.compile(r"(?i)(sk-[A-Za-z0-9]{24,})"),
     re.compile(r"(?i)(Bearer\s+)[A-Za-z0-9._~+/-]{12,}"),
     re.compile(r"(?i)((?:token|password|secret|api[_-]?key)\s*[=:]\s*)[^\s,;]+"),
 ]
