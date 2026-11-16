@@ -158,7 +158,8 @@ def generate_artwork(theme: str, count: int, output_dir: str | Path, dpi: int = 
         designs = DESIGNS if theme == "fruit" else THEME_DESIGNS[theme]
         name = designs[index % len(designs)]
         if theme == "fruit":
-            scale = 1600 if name == "banana" else 1750 if name == "watermelon" else 1650
+            fruit_scales = {"banana": 1600, "watermelon": 1750, "pineapple": 1400, "lemon": 1500}
+            scale = fruit_scales.get(name, 1650)
         else:
             scale = 1320 if index % 3 else 1240
         cx, cy = PAGE_W // 2, PAGE_H // 2 + (index % 2) * 30
