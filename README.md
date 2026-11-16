@@ -22,6 +22,7 @@ Automated, testable production of original children's coloring-book paperbacks f
 - config/series_defaults.json: standard 100-page series target.
 - config/themes.json and config/series_templates/: six theme definitions and ready-to-edit 24-page templates.
 - config/production_policy.json: machine-readable production constitution.
+- config/artwork_generation_spec.json and docs/ARTWORK_GENERATION_SPEC.md: versioned visual, technical, originality, and human-review contract; Fruit Friends pilot profile.
 - docs/BOOK_PRODUCTION_CONSTITUTION.md: mandatory originality, design, and release rules.
 - docs/KDP_TECHNICAL_SPECIFICATION.md: official requirements vs market observations.
 - docs/DEPENDENCY_AUDIT.md: pinned GitHub-sourced libraries, licenses, and security review.

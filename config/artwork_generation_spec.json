@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "spec_id": "KDP-ARTWORK-SPEC-1.0",
+  "status": "pilot",
+  "audience": {
+    "age_min": 4,
+    "age_max": 8
+  },
+  "canvas": {
+    "width_px": 2550,
+    "height_px": 3300,
+    "minimum_dpi": 300,
+    "format": "PNG",
+    "lossless": true
+  },
+  "rendering": {
+    "background_hex": "#FFFFFF",
+    "contour_hex": "#000000",
+    "final_palette": ["#000000", "#FFFFFF"],
+    "target_line_width_pt": 2.4,
+    "minimum_line_width_pt": 0.75,
+    "closed_coloring_contours": true,
+    "allow_gray": false,
+    "allow_shading": false,
+    "allow_gradients": false,
+    "allow_texture": false,
+    "allow_hatching": false,
+    "allow_halftones": false,
+    "allow_watermarks": false,
+    "allow_text": false,
+    "allow_transparency": false
+  },
+  "composition": {
+    "dominant_subject_count_min": 1,
+    "dominant_subject_count_max": 1,
+    "safe_inset_fraction": 0.08,
+    "target_subject_canvas_occupancy_min": 0.45,
+    "target_subject_canvas_occupancy_max": 0.70,
+    "generous_white_space": true,
+    "cropping_allowed": false,
+    "tiny_coloring_regions_allowed": false,
+    "accidental_tangencies_allowed": false
+  },
+  "originality": {
+    "licensed_characters_allowed": false,
+    "brands_or_logos_allowed": false,
+    "unlicensed_reference_art_allowed": false,
+    "human_similarity_review_required": true,
+    "rights_provenance_required": true,
+    "ai_disclosure_decision_owner": "publisher"
+  },
+  "review": {
+    "automated_checks_required": [
+      "canvas_dimensions",
+      "dpi_metadata",
+      "monochrome_source",
+      "binary_black_white_normalization",
+      "no_alpha_after_normalization",
+      "safe_inset",
+      "file_integrity",
+      "exact_duplicate_detection"
+    ],
+    "human_checks_required": [
+      "thumbnail_recognition",
+      "closed_clean_contours",
+      "consistent_line_weight",
+      "large_coloring_regions",
+      "composition_and_white_space",
+      "no_clipping_or_tangencies",
+      "originality_and_rights",
+      "within_book_and_catalog_distinctness"
+    ],
+    "human_approval_required": true,
+    "unknown_provenance_blocks_approval": true
+  },
+  "pilot": {
+    "book_id": "fruit-friends",
+    "theme": "fruit",
+    "design_count": 12,
+    "subjects": [
+      {"id": "apple", "composition": "Broad rounded body, clear top cleft, short stem, one large leaf."},
+      {"id": "banana", "composition": "Single curved banana with both ends visibly capped and one continuous closed outer contour."},
+      {"id": "orange", "composition": "Near-circular fruit with a small stem and leaf; no tiny peel dots."},
+      {"id": "pear", "composition": "Narrow neck and wider lower body with a clear stem and leaf."},
+      {"id": "grapes", "composition": "Compact bunch of large, clearly separated grape forms; avoid tiny overlapping circles."},
+      {"id": "watermelon", "composition": "One large wedge with a closed rind boundary and a few large seeds."},
+      {"id": "strawberry", "composition": "Broad heart-like silhouette, leafy crown, sparse large seed marks."},
+      {"id": "pineapple", "composition": "Oval body with a closed outer contour, simplified broad diagonal lattice, distinct crown leaves."},
+      {"id": "lemon", "composition": "Elongated oval with two clear end points and one leaf; no detached contour fragments."},
+      {"id": "cherries", "composition": "Two large cherries with closed bodies, two readable stems, and one leaf."},
+      {"id": "peach", "composition": "Rounded body with a clear shallow cleft, minimal seam, and one leaf."},
+      {"id": "avocado", "composition": "Distinct pear-like outer silhouette and one large pit; no tiny internal details."}
+    ],
+    "production_asset_directory": "assets/images/fruit/",
+    "pilot_output_must_remain_unapproved_until_human_review": true,
+    "commercial_50_artwork_release_authorized": false
+  }
+}
