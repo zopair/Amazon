@@ -20,6 +20,7 @@ permissions:
   actions: write
   contents: write
   pull-requests: write
+  issues: write
 
 concurrency:
   group: kdp-inspector-${{ github.event.workflow_run.id || inputs.run_id }}
@@ -76,6 +77,28 @@ jobs:
             --head-branch "$TARGET_BRANCH" \
             --conclusion "$TARGET_CONCLUSION"
           cat diagnostics/latest/report.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Create a human-intervention issue for non-retryable failures
+        if: github.event_name == 'workflow_run' && env.TARGET_CONCLUSION == 'failure'
+        shell: bash
+        run: |
+          set -euo pipefail
+          retryable="$(python -c 'import json; print(str(json.load(open("diagnostics/latest/report.json", encoding="utf-8")).get("retryable_candidate", False)).lower())')"
+          if [[ "$retryable" == "true" ]]; then
+            echo "Transient failure is eligible for the bounded retry; no human issue created."
+            exit 0
+          fi
+          gh label create human-intervention --repo "$GITHUB_REPOSITORY" --color "D93F0B" --description "Owner decision required before workflow can continue" --force
+          existing="$(gh issue list --repo "$GITHUB_REPOSITORY" --state open --search "in:title $TARGET_RUN_ID" --json number --jq 'length')"
+          if [[ "$existing" == "0" ]]; then
+            category="$(python -c 'import json; print(json.load(open("diagnostics/latest/report.json", encoding="utf-8")).get("primary_category", "unknown"))')"
+            gh issue create --repo "$GITHUB_REPOSITORY" \
+              --title "Human intervention required: $TARGET_WORKFLOW run $TARGET_RUN_ID" \
+              --label human-intervention \
+              --body "The workflow failed and no safe, registered deterministic repair was applicable.\n\nWorkflow run ID: $TARGET_RUN_ID\nWorkflow: $TARGET_WORKFLOW\nBranch: $TARGET_BRANCH\nFailure category: $category\n\nReview the attached KDP diagnostic artifact and workflow logs. Fix the underlying issue and run tests first. When you explicitly approve retrying the failed jobs, add the label `approved-to-resume` to this issue. The intervention queue checks approvals every six hours. Do not add that label until the cause has been addressed."
+          else
+            echo "An open intervention issue already references this run."
+          fi
 
       - name: Retry only classified transient failures (maximum two attempts)
         if: github.event_name == 'workflow_run'
