@@ -11,6 +11,17 @@ from scripts.cover_calculator import calculate_cover_dimensions
 
 PT = 72.0
 
+def _cmyk(hex_value: str):
+    value=hex_value.lstrip("#")
+    r,g,b=(int(value[i:i+2],16)/255 for i in (0,2,4))
+    k=1-max(r,g,b)
+    if k>=1:
+        return colors.CMYKColor(0,0,0,1)
+    c=(1-r-k)/(1-k)
+    m=(1-g-k)/(1-k)
+    y=(1-b-k)/(1-k)
+    return colors.CMYKColor(c,m,y,k)
+
 def _register_fonts() -> None:
     font_dir = Path(os.path.dirname(reportlab.__file__)) / "fonts"
     regular = font_dir / "Vera.ttf"
@@ -24,11 +35,11 @@ def _register_fonts() -> None:
 
 def _fruit_icon(pdf, cx: float, cy: float, radius: float, color, kind: int) -> None:
     pdf.setFillColor(color)
-    pdf.setStrokeColor(colors.HexColor("#202020"))
+    pdf.setStrokeColor(_cmyk("#202020"))
     pdf.setLineWidth(2.2)
     if kind % 4 == 0:
         pdf.circle(cx, cy, radius, stroke=1, fill=1)
-        pdf.setFillColor(colors.HexColor("#4E8B43"))
+        pdf.setFillColor(_cmyk("#4E8B43"))
         pdf.ellipse(cx-2, cy+radius-5, cx+radius*.42, cy+radius+12, stroke=1, fill=1)
     elif kind % 4 == 1:
         p=pdf.beginPath()
@@ -36,16 +47,16 @@ def _fruit_icon(pdf, cx: float, cy: float, radius: float, color, kind: int) -> N
         p.curveTo(cx-radius*1.1,cy-radius*.1,cx-radius*.7,cy+radius,cx,cy+radius*.65)
         p.curveTo(cx+radius*.7,cy+radius,cx+radius*1.1,cy-radius*.1,cx,cy-radius)
         pdf.drawPath(p,stroke=1,fill=1)
-        pdf.setStrokeColor(colors.HexColor("#4E8B43"))
+        pdf.setStrokeColor(_cmyk("#4E8B43"))
         pdf.line(cx,cy+radius*.55,cx+8,cy+radius+12)
     elif kind % 4 == 2:
         pdf.setFillColor(color)
         pdf.roundRect(cx-radius,cy-radius*.65,radius*2,radius*1.3,radius*.45,stroke=1,fill=1)
-        pdf.setStrokeColor(colors.HexColor("#202020"))
+        pdf.setStrokeColor(_cmyk("#202020"))
         pdf.line(cx-radius*.85,cy+radius*.2,cx+radius*.85,cy+radius*.2)
     else:
         pdf.ellipse(cx-radius*.8,cy-radius,cx+radius*.8,cy+radius,stroke=1,fill=1)
-        pdf.setFillColor(colors.HexColor("#4E8B43"))
+        pdf.setFillColor(_cmyk("#4E8B43"))
         pdf.wedge(cx-8,cy+radius*.65,cx+radius*.9,cy+radius*1.5,0,90,stroke=1,fill=1)
 
 def build_cover(meta: dict, output_path: str | Path) -> Path:
@@ -68,19 +79,15 @@ def build_cover(meta: dict, output_path: str | Path) -> Path:
     output = Path(output_path)
     output.parent.mkdir(parents=True, exist_ok=True)
     pdf = canvas.Canvas(str(output), pagesize=(width,height), pageCompression=1, invariant=1)
-    pdf.setTitle(str(meta["title"]) + " — Full Wrap Cover")
-    pdf.setAuthor(str(meta.get("author") or ""))
-    # Opaque backgrounds only; the page itself is the complete back + spine + front + bleed.
-    pdf.setFillColor(colors.HexColor("#DFF2F0"))
-    pdf.rect(0,0,width,height,stroke=0,fill=1)
-    pdf.setFillColor(colors.HexColor("#FFF4D6"))
-    pdf.rect(front_x,0,trim_w,height,stroke=0,fill=1)
-    pdf.setFillColor(colors.HexColor("#E6F0FF"))
-    pdf.rect(back_x,0,trim_w,height,stroke=0,fill=1)
-    pdf.setFillColor(colors.HexColor("#F3E6C8"))
+    # Opaque CMYK backgrounds extend through the bleed to the outer PDF edge.
+    pdf.setFillColor(_cmyk("#E6F0FF"))
+    pdf.rect(0,0,spine_x,height,stroke=0,fill=1)
+    pdf.setFillColor(_cmyk("#FFF4D6"))
+    pdf.rect(front_x,0,width-front_x,height,stroke=0,fill=1)
+    pdf.setFillColor(_cmyk("#F3E6C8"))
     pdf.rect(spine_x,0,spine_w,height,stroke=0,fill=1)
     # Back cover copy is intentionally modest and remains within the safe area.
-    pdf.setFillColor(colors.HexColor("#202020"))
+    pdf.setFillColor(_cmyk("#202020"))
     pdf.setFont("KdpVera-Bold",20)
     pdf.drawString(back_x+36,height-92,"A fruity first coloring adventure!")
     pdf.setFont("KdpVera",11)
@@ -105,7 +112,7 @@ def build_cover(meta: dict, output_path: str | Path) -> Path:
     if meta.get("cover",{}).get("reserve_barcode_area",True):
         bw=float(meta.get("cover",{}).get("barcode_area_width_in",2.0))*PT
         bh=float(meta.get("cover",{}).get("barcode_area_height_in",1.2))*PT
-        pdf.setFillColor(colors.white)
+        pdf.setFillColor(_cmyk("#FFFFFF"))
         pdf.rect(back_x+trim_w-bw-24,bleed+20,bw,bh,stroke=0,fill=1)
     # Front cover composition.
     front_center = front_x + trim_w/2
@@ -121,7 +128,7 @@ def build_cover(meta: dict, output_path: str | Path) -> Path:
         (front_center+65,height*.36,42)
     ]
     for i,(cx,cy,radius) in enumerate(positions):
-        _fruit_icon(pdf,cx,cy,radius,colors.HexColor(palette[i%len(palette)]),i)
+        _fruit_icon(pdf,cx,cy,radius,_cmyk(palette[i%len(palette)]),i)
     pdf.setFillColor(colors.HexColor("#263238"))
     pdf.setFont("KdpVera-Bold",12)
     pdf.drawCentredString(front_center,bleed+45,"BIG & EASY PICTURES  •  AGES 4–8")
