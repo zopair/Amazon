@@ -3,12 +3,20 @@ from __future__ import annotations
 import math
 from pathlib import Path
 from PIL import Image, ImageDraw
+from scripts.theme_art import FLOWERS, TOYS, BIRDS, ANIMALS, PROFESSIONS, draw_theme_art
 
 PAGE_W, PAGE_H = 2550, 3300
 DESIGNS = [
     "apple", "banana", "orange", "pear", "grapes", "watermelon",
     "strawberry", "pineapple", "lemon", "cherries", "peach", "avocado",
 ]
+THEME_DESIGNS = {
+    "flowers": FLOWERS,
+    "toys": TOYS,
+    "birds": BIRDS,
+    "animals": ANIMALS,
+    "professions": PROFESSIONS,
+}
 
 def _bezier(p0, p1, p2, p3, steps=48):
     points = []
@@ -115,8 +123,8 @@ def _fruit(draw, name, cx, cy, s, width, variant=0):
         _leaf(draw,x+s*.1,y-s*.45,s*.28,width)
 
 def generate_artwork(theme: str, count: int, output_dir: str | Path, dpi: int = 300, line_width_pt: float = 2.4) -> list[Path]:
-    if theme != "fruit":
-        raise ValueError("The first production sample currently supports the fruit theme only")
+    if theme != "fruit" and theme not in THEME_DESIGNS:
+        raise ValueError(f"Unsupported theme: {theme}. Supported themes: fruit, flowers, toys, birds, animals, professions")
     if count < 1 or count > 50:
         raise ValueError("illustration count must be between 1 and 50")
     if dpi < 300:
@@ -133,14 +141,22 @@ def generate_artwork(theme: str, count: int, output_dir: str | Path, dpi: int = 
         # Large central subject with generous safe margins and simple secondary fruit leaves.
         scale = 1320 if index % 3 else 1240
         cx, cy = PAGE_W // 2, PAGE_H // 2 + (index % 2) * 30
-        name = DESIGNS[index % len(DESIGNS)]
-        _fruit(draw, name, cx, cy, scale, line_px, index)
-        if index >= len(DESIGNS):
-            # Distinct, low-detail companion accents keep 50-page series runs varied.
-            accent = DESIGNS[(index * 5 + 3) % len(DESIGNS)]
-            _fruit(draw, accent, cx + 540, cy + 620, 360, max(4,line_px-2), index + 1)
-            _leaf(draw, cx - 560, cy - 600, 210, max(4,line_px-2))
-        path = output / f"fruit_{index+1:02d}_{name}.png"
+        designs = DESIGNS if theme == "fruit" else THEME_DESIGNS[theme]
+        name = designs[index % len(designs)]
+        if theme == "fruit":
+            _fruit(draw, name, cx, cy, scale, line_px, index)
+        else:
+            draw_theme_art(draw,theme,name,cx,cy,scale,line_px,index)
+        if index >= len(designs):
+            # Distinct, low-detail companion motifs keep longer volumes varied.
+            accent = designs[(index * 5 + 3) % len(designs)]
+            if theme == "fruit":
+                _fruit(draw, accent, cx + 540, cy + 620, 360, max(4,line_px-2), index + 1)
+                _leaf(draw, cx - 560, cy - 600, 210, max(4,line_px-2))
+            else:
+                draw_theme_art(draw,theme,accent,cx+520,cy+610,360,max(4,line_px-2),index+1)
+        safe_name=name.replace(" ","_")
+        path = output / f"{theme}_{index+1:02d}_{safe_name}.png"
         image.save(path, format="PNG", dpi=(dpi,dpi), optimize=True)
         paths.append(path)
     return paths
