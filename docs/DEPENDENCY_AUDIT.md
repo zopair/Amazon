@@ -7,6 +7,7 @@ Checked: 2026-11-16. Versions are pinned to avoid unreviewed drift. Recheck GitH
 | Pillow | 12.3.0 | https://github.com/python-pillow/Pillow | MIT-CMU | Selected because 12.3.0 includes fixes for multiple 2026 security issues affecting earlier 12.x releases. |
 | ReportLab | 5.0.1 | https://github.com/MrBitBucket/reportlab-mirror | BSD | Selected above the 4.4.10 security-fix release; 5.0.1 is the current upstream release observed in the source mirror. |
 | pypdf | 7.1.0 | https://github.com/py-pdf/pypdf | BSD-3-Clause | Selected after rejecting 5.9.0: the 6.21.x and 7.0.x releases contain multiple security/resource-exhaustion fixes; 7.1.0 is the latest signed release observed on 2026-11-16. |
+| actionlint | 1.7.12 | https://github.com/rhysd/actionlint | MIT | Pinned Docker image used only to statically validate GitHub Actions workflow files. |
 
 ## Explicitly rejected versions
 
@@ -30,3 +31,4 @@ Checked: 2026-11-16. Versions are pinned to avoid unreviewed drift. Recheck GitH
 - pypdf license: https://github.com/py-pdf/pypdf/blob/main/LICENSE
 - pypdf releases: https://github.com/py-pdf/pypdf/releases
 - pypdf security advisories: https://github.com/py-pdf/pypdf/security/advisories
+- actionlint releases and license: https://github.com/rhysd/actionlint/releases and https://github.com/rhysd/actionlint/blob/main/LICENSE.txt
