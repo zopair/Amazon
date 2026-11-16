@@ -76,6 +76,16 @@ def _fonts_embedded(page):
                 found=True
     return found
 
+def _uses_cmyk_only(page, reader):
+    contents=page.get_contents()
+    if contents is None:
+        return False
+    stream=ContentStream(contents,reader)
+    operators=[operator for _,operator in stream.operations]
+    if any(operator in {b"rg",b"RG"} for operator in operators):
+        return False
+    return any(operator in {b"k",b"K"} for operator in operators)
+
 def _has_transparency(page):
     resources=_resources(page)
     ext=_obj(resources.get("/ExtGState",{})) or {}
@@ -107,6 +117,8 @@ def validate_book_config(meta: dict[str,Any]) -> list[str]:
         errors.append("title must not be empty")
     if page_count<24 or page_count%2:
         errors.append("page_count must be even and at least 24")
+    if page_count>590:
+        errors.append("page_count exceeds KDP's 590-page maximum for 8.5 x 11 in black-ink white-paper paperbacks")
     if width!=8.5 or height!=11.0:
         errors.append("sample series trim must be exactly 8.5 x 11 inches")
     if meta["interior"].get("single_sided") is not True:
@@ -159,6 +171,15 @@ def validate_book(interior_pdf: str|Path, cover_pdf: str|Path, meta: dict[str,An
         cover=PdfReader(str(cover_path),strict=True)
         if interior.is_encrypted or cover.is_encrypted:
             errors.append("PDF files must not be encrypted or password protected")
+        interior_metadata_absent=not any((interior.metadata or {}).values())
+        cover_metadata_absent=not any((cover.metadata or {}).values())
+        if not interior_metadata_absent:
+            errors.append("interior PDF contains document metadata; KDP submission files must not contain metadata")
+        if not cover_metadata_absent:
+            errors.append("cover PDF contains document metadata; KDP submission files must not contain metadata")
+        for path in (interior_path,cover_path):
+            if path.stat().st_size>650*1024*1024:
+                errors.append(f"PDF exceeds KDP's 650 MB file-size limit: {path.name}")
         expected_pages=int(meta["interior"]["page_count"])
         if len(interior.pages)!=expected_pages:
             errors.append(f"interior page count mismatch: expected {expected_pages}, found {len(interior.pages)}")
@@ -209,6 +230,7 @@ def validate_book(interior_pdf: str|Path, cover_pdf: str|Path, meta: dict[str,An
         cover_page=cover.pages[0] if cover.pages else None
         cover_dims={}
         cover_fonts=False
+        cover_cmyk=False
         if cover_page:
             from scripts.cover_calculator import calculate_cover_dimensions
             d=calculate_cover_dimensions(
@@ -221,6 +243,9 @@ def validate_book(interior_pdf: str|Path, cover_pdf: str|Path, meta: dict[str,An
             if abs(actual_cover[0]-d["cover_width_in"])>0.001 or abs(actual_cover[1]-d["cover_height_in"])>0.001:
                 errors.append(f"cover dimensions mismatch: found {actual_cover}, expected {(d['cover_width_in'],d['cover_height_in'])}")
             cover_fonts=_fonts_embedded(cover_page)
+            cover_cmyk=_uses_cmyk_only(cover_page,cover)
+            if not cover_cmyk:
+                errors.append("cover must use CMYK color values rather than RGB")
             if not cover_fonts:
                 errors.append("cover PDF does not contain an embedded TrueType font")
             if _has_transparency(cover_page):
@@ -230,9 +255,10 @@ def validate_book(interior_pdf: str|Path, cover_pdf: str|Path, meta: dict[str,An
         result["interior"]={
             "page_count":len(interior.pages),"illustration_pages":art_count,
             "blank_reverse_pages":blank_count,"minimum_effective_dpi":None if min_dpi==10_000 else round(min_dpi,2),
+            "metadata_absent":interior_metadata_absent,
             "pages":page_results
         }
-        result["cover"]={**cover_dims,"fonts_embedded":cover_fonts}
+        result["cover"]={**cover_dims,"fonts_embedded":cover_fonts,"metadata_absent":cover_metadata_absent,"cmyk_colors":cover_cmyk}
     except Exception as exc:
         errors.append(f"PDF inspection failed: {type(exc).__name__}: {exc}")
     result["errors"]=errors
