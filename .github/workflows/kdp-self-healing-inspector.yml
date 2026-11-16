@@ -117,7 +117,7 @@ jobs:
 
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          repair_branch="autofix/kdp-run-${TARGET_RUN_ID}"
+          repair_branch="autofix/kdp-run-${TARGET_RUN_ID}-attempt-${TARGET_ATTEMPT}"
           git switch -c "$repair_branch"
           git add config scripts tests
           git commit -m "fix: apply verified KDP repair for run ${TARGET_RUN_ID}"
