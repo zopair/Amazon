@@ -7,6 +7,8 @@
     "original_artwork_or_documented_rights",
     "no_unlicensed_characters_brands_logos_or_trademarks",
     "no_misleading_title_subtitle_description_keywords_or_categories",
+    "no_duplicate_or_near_duplicate_pages_within_volume",
+    "no_excessively_reused_content_across_books",
     "single_sided_odd_page_art_even_page_blank",
     "trim_size_exact",
     "page_count_even_and_at_least_24",
