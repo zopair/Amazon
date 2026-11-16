@@ -51,6 +51,13 @@ class ProductionConfigTests(unittest.TestCase):
         self.assertTrue(any("line_width_pt" in error for error in validate_book_config(broken)))
 
 
+class PipelineInputSafetyTests(unittest.TestCase):
+    def test_config_path_must_stay_inside_config_directory(self):
+        from scripts.pipeline import run
+        with tempfile.TemporaryDirectory() as tmp:
+            with self.assertRaisesRegex(ValueError,"inside the repository config"):
+                run(Path("../README.md"),Path(tmp)/"output")
+
 class ThemeSupportTests(unittest.TestCase):
     def test_all_requested_general_series_themes_generate_300_dpi_art(self):
         from PIL import Image
