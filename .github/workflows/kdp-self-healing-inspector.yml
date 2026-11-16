@@ -84,8 +84,8 @@ jobs:
         run: |
           set -euo pipefail
           retryable="$(python -c 'import json; print(str(json.load(open("diagnostics/latest/report.json", encoding="utf-8")).get("retryable_candidate", False)).lower())')"
-          if [[ "$retryable" == "true" ]]; then
-            echo "Transient failure is eligible for the bounded retry; no human issue created."
+          if [[ "$retryable" == "true" && "$TARGET_ATTEMPT" =~ ^[0-9]+$ ]] && (( TARGET_ATTEMPT < 2 )); then
+            echo "Transient failure still has a bounded retry available; no human issue created yet."
             exit 0
           fi
           gh label create human-intervention --repo "$GITHUB_REPOSITORY" --color "D93F0B" --description "Owner decision required before workflow can continue" --force
