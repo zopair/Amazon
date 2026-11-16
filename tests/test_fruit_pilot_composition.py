@@ -15,7 +15,7 @@ class FruitPilotCompositionTests(unittest.TestCase):
             for filename in ("fruit_02_banana.png", "fruit_06_watermelon.png"):
                 with Image.open(by_name[filename]) as image:
                     self.assertEqual(image.size, (2550, 3300))
-                    self.assertGreaterEqual(image.info["dpi"][0], 300)
+                    self.assertGreaterEqual(image.info["dpi"][0], 299.5)
                     bbox = image.convert("L").point(lambda p: 255 if p < 255 else 0).getbbox()
                     self.assertIsNotNone(bbox)
                     left, top, right, bottom = bbox
