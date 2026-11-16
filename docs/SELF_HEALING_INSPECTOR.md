@@ -18,6 +18,15 @@ The inspector is dependency-free and uses the Python standard library. It does n
 8. A pull request is created only when a registered repair changed files and all tests pass.
 9. Reports are uploaded as a GitHub Actions artifact and added to the workflow summary.
 
+## GitHub permissions and settings
+
+The monitor workflow uses the repository-scoped GITHUB_TOKEN with:
+- actions: write — read run logs and request a bounded failed-job rerun.
+- contents: write — push a repair branch.
+- pull-requests: write — open a pull request after tests pass.
+
+No personal access token or external secret is required. To allow the bot to open repair pull requests, enable **Settings → Actions → General → Workflow permissions / Allow GitHub Actions to create and approve pull requests** if that repository setting is available and currently disabled. If PR creation is blocked, diagnostics and artifacts still run; the repair branch/PR step will report the permission failure.
+
 ## Repair safety
 
 Automatic repairs are deliberately constrained:
