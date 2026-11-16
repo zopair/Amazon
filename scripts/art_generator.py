@@ -1,4 +1,4 @@
-"""Generate original, bold-outline fruit illustrations as opaque 300-DPI PNGs."""
+"""Generate original, bold-outline illustrations for all supported series themes."""
 from __future__ import annotations
 import math
 from pathlib import Path
@@ -138,7 +138,7 @@ def generate_artwork(theme: str, count: int, output_dir: str | Path, dpi: int = 
     for index in range(count):
         image = Image.new("RGB", (PAGE_W, PAGE_H), "white")
         draw = ImageDraw.Draw(image)
-        # Large central subject with generous safe margins and simple secondary fruit leaves.
+        # Large central subject with generous safe margins and simple secondary accents.
         scale = 1320 if index % 3 else 1240
         cx, cy = PAGE_W // 2, PAGE_H // 2 + (index % 2) * 30
         designs = DESIGNS if theme == "fruit" else THEME_DESIGNS[theme]
