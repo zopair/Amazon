@@ -125,7 +125,7 @@ def generate_artwork(theme: str, count: int, output_dir: str | Path, dpi: int = 
         raise ValueError("line width must meet KDP's 0.75 pt minimum")
     output = Path(output_dir)
     output.mkdir(parents=True, exist_ok=True)
-    line_px = max(4, round(line_width_pt * dpi / 72))
+    line_px = max(4, math.ceil(line_width_pt * dpi / 72))
     paths = []
     for index in range(count):
         image = Image.new("RGB", (PAGE_W, PAGE_H), "white")
