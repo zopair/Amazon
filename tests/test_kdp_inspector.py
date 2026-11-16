@@ -14,6 +14,10 @@ class InspectorTests(unittest.TestCase):
         self.assertEqual(result["primary_category"], "dependency")
         self.assertEqual(result["finding_count"], 1)
 
+    def test_specific_dependency_error_wins_over_traceback_header(self):
+        result = classify_log("Traceback (most recent call last):\nModuleNotFoundError: No module named 'pypdf'")
+        self.assertEqual(result["primary_category"], "dependency")
+
     def test_detects_transient_network_failure_as_retry_candidate(self):
         result = classify_log("Connection timed out while downloading artifact")
         self.assertTrue(result["retryable_candidate"])
@@ -50,6 +54,32 @@ class RepairEngineTests(unittest.TestCase):
             result = apply_rules(root, rules)
             self.assertEqual(result["applied_count"], 1)
             self.assertEqual(target.read_text(encoding="utf-8"), "VALUE = 2\n")
+
+    def test_refuses_symlinked_parent_directory(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            outside = root / "outside"
+            outside.mkdir()
+            target = outside / "sample.py"
+            target.write_text("VALUE = 1\n", encoding="utf-8")
+            (root / "scripts").mkdir()
+            (root / "scripts" / "linked").symlink_to(outside, target_is_directory=True)
+            digest = hashlib.sha256(target.read_bytes()).hexdigest()
+            rules = root / "rules.json"
+            rules.write_text(json.dumps({
+                "version": 1,
+                "rules": [{
+                    "id": "symlink-escape",
+                    "path": "scripts/linked/sample.py",
+                    "expected_sha256": digest,
+                    "before": "VALUE = 1",
+                    "after": "VALUE = 2"
+                }]
+            }), encoding="utf-8")
+            result = apply_rules(root, rules)
+            self.assertEqual(result["applied_count"], 0)
+            self.assertEqual(result["skipped_count"], 1)
+            self.assertEqual(target.read_text(encoding="utf-8"), "VALUE = 1\n")
 
     def test_refuses_path_traversal(self):
         with tempfile.TemporaryDirectory() as tmp:
