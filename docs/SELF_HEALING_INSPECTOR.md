@@ -41,6 +41,6 @@ The first version inspects failed workflow logs and can apply registered determi
 
 Run:
 
-    python -m unittest discover -s tests -v
+    python -m unittest discover -s tests -t . -v
 
 No third-party Python packages are required.
