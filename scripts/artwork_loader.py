@@ -39,10 +39,12 @@ def load_artwork(
         if path.is_file() and path.suffix.lower() in {".png",".jpg",".jpeg"}
     ) if source_dir.is_dir() else []
     if not candidates:
-        if count>12:
+        from scripts.art_generator import DESIGNS, THEME_DESIGNS
+        motif_count = len(DESIGNS) if theme == "fruit" else len(THEME_DESIGNS.get(theme, []))
+        if count>motif_count:
             raise ValueError(
                 f"{theme} book requires {count} unique approved artwork files in {source_dir}; "
-                "the built-in generator has only 12 distinct motifs and will not repeat them."
+                f"the built-in generator has only {motif_count} distinct motifs and will not repeat them."
             )
         return generate_artwork(theme,count,generated_root,dpi,line_width_pt)
     if len(candidates)!=count:
