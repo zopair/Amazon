@@ -65,19 +65,26 @@ def _fruit(draw, name, cx, cy, s, width, variant=0):
         _line(draw,[(x,y-s*.48),(x+variant*5,y-s*.67)],width)
         _leaf(draw,x,y-s*.63,s*.32,width)
     elif name == "grapes":
+        # Four compact rows with visible gaps so every grape remains individually colorable.
         for row in range(4):
             for col in range(4-row):
-                gx=x+(col-(3-row)/2)*s*.22
-                gy=y-s*.25+row*s*.2
-                draw.ellipse((gx-s*.13,gy-s*.13,gx+s*.13,gy+s*.13),outline=0,width=max(4,width-2))
+                gx=x+(col-(3-row)/2)*s*.27
+                gy=y-s*.31+row*s*.23
+                radius=s*.105
+                draw.ellipse((gx-radius,gy-radius,gx+radius,gy+radius),outline=0,width=max(4,width-2))
         _line(draw,[(x,y-s*.35),(x+variant*5,y-s*.62)],width)
         _leaf(draw,x,y-s*.58,s*.42,width)
     elif name == "watermelon":
-        draw.pieslice((x-s*.55,y-s*.48,x+s*.55,y+s*.55),0,180,outline=0,width=width)
-        _line(draw,[(x-s*.55,y),(x+s*.55,y)],width)
-        _line(draw,_bezier((x-s*.43,y+s*.18),(x-s*.18,y+s*.58),(x+s*.18,y+s*.58),(x+s*.43,y+s*.18)),width)
-        for dx,dy in [(-.28,.04),(-.08,.12),(.13,.08),(.32,.02)]:
-            draw.ellipse((x+s*dx-7,y+s*dy-12,x+s*dx+7,y+s*dy+12),outline=0,width=max(3,width//2))
+        # Upright wedge: a taller silhouette reads clearly and uses the page area better.
+        top=(x,y-s*.52)
+        left=(x-s*.52,y+s*.38)
+        right=(x+s*.52,y+s*.38)
+        lower=_bezier(left,(x-s*.3,y+s*.55),(x+s*.3,y+s*.55),right)
+        _line(draw,[top,left]+lower[1:]+[top],width)
+        inner=_bezier((x-s*.43,y+s*.30),(x-s*.2,y+s*.44),(x+s*.2,y+s*.44),(x+s*.43,y+s*.30))
+        _line(draw,inner,width)
+        for dx,dy in [(-.22,.04),(0,-.12),(.22,.04),(-.1,.20),(.12,.20)]:
+            draw.ellipse((x+s*dx-10,y+s*dy-16,x+s*dx+10,y+s*dy+16),outline=0,width=max(3,width//2))
     elif name == "strawberry":
         pts=_bezier((x,y-s*.45),(x-s*.1,y-s*.3),(x-s*.48,y-s*.12),(x-s*.4,y+s*.18))
         pts+=_bezier((x-s*.4,y+s*.18),(x-s*.32,y+s*.48),(x-s*.08,y+s*.55),(x,y+s*.62))[1:]
@@ -88,11 +95,20 @@ def _fruit(draw, name, cx, cy, s, width, variant=0):
             draw.ellipse((x+s*dx-5,y+s*dy-8,x+s*dx+5,y+s*dy+8),outline=0,width=max(3,width//3))
         _leaf(draw,x-s*.16,y-s*.38,s*.28,width)
     elif name == "pineapple":
-        draw.ellipse((x-s*.38,y-s*.12,x+s*.38,y+s*.53),outline=0,width=width)
-        for i in range(-2,3):
-            _line(draw,[(x+i*s*.12,y-s*.12),(x+i*s*.28,y+s*.52)],max(4,width//2))
-        for i in range(-2,3):
-            _line(draw,[(x-s*.35,y+i*s*.12),(x+s*.35,y+i*s*.12)],max(4,width//2))
+        # Keep the simple lattice strictly inside the oval body.
+        rx, ry = s*.38, s*.325
+        body_cy = y+s*.205
+        draw.ellipse((x-rx,body_cy-ry,x+rx,body_cy+ry),outline=0,width=width)
+        for step in range(-2,3):
+            xx=x+step*s*.12
+            normalized=abs(xx-x)/rx
+            half=ry*math.sqrt(max(0.0,1-normalized*normalized))
+            _line(draw,[(xx,body_cy-half),(xx,body_cy+half)],max(4,width//2))
+        for step in range(-2,3):
+            yy=body_cy+step*s*.12
+            normalized=abs(yy-body_cy)/ry
+            half=rx*math.sqrt(max(0.0,1-normalized*normalized))
+            _line(draw,[(x-half,yy),(x+half,yy)],max(4,width//2))
         for j in range(5):
             xx=x+(j-2)*s*.13
             _line(draw,_bezier((x,y-s*.15),(xx-s*.12,y-s*.48),(xx+s*.06,y-s*.72),(xx+s*.12,y-s*.88)),width)
@@ -139,10 +155,14 @@ def generate_artwork(theme: str, count: int, output_dir: str | Path, dpi: int = 
         image = Image.new("RGB", (PAGE_W, PAGE_H), "white")
         draw = ImageDraw.Draw(image)
         # Large central subject with generous safe margins and simple secondary accents.
-        scale = 1320 if index % 3 else 1240
-        cx, cy = PAGE_W // 2, PAGE_H // 2 + (index % 2) * 30
         designs = DESIGNS if theme == "fruit" else THEME_DESIGNS[theme]
         name = designs[index % len(designs)]
+        if theme == "fruit":
+            fruit_scales = {"banana": 1600, "watermelon": 1750, "pineapple": 1400, "lemon": 1500}
+            scale = fruit_scales.get(name, 1650)
+        else:
+            scale = 1320 if index % 3 else 1240
+        cx, cy = PAGE_W // 2, PAGE_H // 2 + (index % 2) * 30
         if theme == "fruit":
             _fruit(draw, name, cx, cy, scale, line_px, index)
         else:
