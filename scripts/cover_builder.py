@@ -33,6 +33,25 @@ def _register_fonts() -> None:
     if "KdpVera-Bold" not in pdfmetrics.getRegisteredFontNames():
         pdfmetrics.registerFont(TTFont("KdpVera-Bold", str(bold)))
 
+def _kawaii_face(pdf, cx: float, cy: float, radius: float) -> None:
+    """Smiling kawaii face matching the interior bold-and-easy style."""
+    ink = _cmyk("#202020")
+    white = _cmyk("#FFFFFF")
+    # Shiny filled eyes with white highlights.
+    for ex in (cx - radius * .32, cx + radius * .32):
+        pdf.setFillColor(ink)
+        pdf.ellipse(ex - radius * .11, cy - radius * .02, ex + radius * .11, cy + radius * .24, stroke=0, fill=1)
+        pdf.setFillColor(white)
+        pdf.circle(ex - radius * .045, cy + radius * .15, radius * .035, stroke=0, fill=1)
+    # Wide smile.
+    pdf.setStrokeColor(ink)
+    pdf.setLineWidth(2.4)
+    pdf.arc(cx - radius * .22, cy - radius * .42, cx + radius * .22, cy - radius * .02, 200, 140)
+    # Colorable cheek ovals.
+    pdf.setLineWidth(1.8)
+    for ex in (cx - radius * .52, cx + radius * .52):
+        pdf.ellipse(ex - radius * .12, cy - radius * .22, ex + radius * .12, cy - radius * .06, stroke=1, fill=0)
+
 def _fruit_icon(pdf, cx: float, cy: float, radius: float, color, kind: int) -> None:
     pdf.setFillColor(color)
     pdf.setStrokeColor(_cmyk("#202020"))
@@ -129,6 +148,7 @@ def build_cover(meta: dict, output_path: str | Path) -> Path:
     ]
     for i,(cx,cy,radius) in enumerate(positions):
         _fruit_icon(pdf,cx,cy,radius,_cmyk(palette[i%len(palette)]),i)
+        _kawaii_face(pdf,cx,cy-radius*.05,radius)
     pdf.setFillColor(_cmyk("#263238"))
     pdf.setFont("KdpVera-Bold",12)
     pdf.drawCentredString(front_center,bleed+45,"BIG & EASY PICTURES  •  AGES 4–8")
