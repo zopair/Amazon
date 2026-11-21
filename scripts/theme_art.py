@@ -278,6 +278,10 @@ def _profession(draw,name,cx,cy,s,w,index):
         _ellipse(draw,(cx-s*.18,cy-s*.62,cx+s*.18,cy-s*.25),max(3,w//2))
 
 def draw_theme_art(draw,theme,name,cx,cy,scale,width,index):
+    if theme=="christmas":
+        from scripts.theme_christmas import _christmas
+        _christmas(draw,name,cx,cy,scale,width,index)
+        return
     if theme=="flowers":
         _flower(draw,name,cx,cy,scale,width,index)
     elif theme=="toys":
