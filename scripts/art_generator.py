@@ -2,7 +2,7 @@
 from __future__ import annotations
 import math
 from pathlib import Path
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageFont, ImageOps
 from scripts.theme_art import FLOWERS, TOYS, BIRDS, ANIMALS, PROFESSIONS, draw_theme_art
 
 PAGE_W, PAGE_H = 2550, 3300
@@ -84,7 +84,7 @@ def _fruit(draw, name, cx, cy, s, width, variant=0):
         inner=_bezier((x-s*.43,y+s*.30),(x-s*.2,y+s*.44),(x+s*.2,y+s*.44),(x+s*.43,y+s*.30))
         _line(draw,inner,width)
         for dx,dy in [(-.22,.04),(0,-.12),(.22,.04),(-.1,.20),(.12,.20)]:
-            draw.ellipse((x+s*dx-10,y+s*dy-16,x+s*dx+10,y+s*dy+16),outline=0,width=max(3,width//2))
+            draw.ellipse((x+s*dx-s*.018,y+s*dy-s*.03,x+s*dx+s*.018,y+s*dy+s*.03),outline=0,width=max(4,width//3))
     elif name == "strawberry":
         pts=_bezier((x,y-s*.45),(x-s*.1,y-s*.3),(x-s*.48,y-s*.12),(x-s*.4,y+s*.18))
         pts+=_bezier((x-s*.4,y+s*.18),(x-s*.32,y+s*.48),(x-s*.08,y+s*.55),(x,y+s*.62))[1:]
@@ -92,7 +92,7 @@ def _fruit(draw, name, cx, cy, s, width, variant=0):
         pts+=_bezier((x+s*.4,y+s*.18),(x+s*.48,y-s*.12),(x+s*.1,y-s*.3),(x,y-s*.45))[1:]
         _line(draw,pts,width)
         for dx,dy in [(-.2,-.12),(.0,-.05),(.2,-.12),(-.23,.12),(.0,.18),(.23,.12),(-.1,.37),(.12,.38)]:
-            draw.ellipse((x+s*dx-5,y+s*dy-8,x+s*dx+5,y+s*dy+8),outline=0,width=max(3,width//3))
+            draw.ellipse((x+s*dx-s*.013,y+s*dy-s*.02,x+s*dx+s*.013,y+s*dy+s*.02),outline=0,width=max(4,width//4))
         _leaf(draw,x-s*.16,y-s*.38,s*.28,width)
     elif name == "pineapple":
         # Keep the simple lattice strictly inside the oval body.
@@ -138,6 +138,21 @@ def _fruit(draw, name, cx, cy, s, width, variant=0):
         draw.ellipse((x-s*.18,y+s*.05,x+s*.18,y+s*.4),outline=0,width=width)
         _leaf(draw,x+s*.1,y-s*.45,s*.28,width)
 
+
+FONT_PATH = Path(__file__).resolve().parent.parent / "assets" / "fonts" / "DejaVuSans-Bold.ttf"
+
+
+def _label(draw, text, cx, top_y, max_width, stroke_px):
+    """Large colorable name label: bold caps, white fill, thick black outline."""
+    size = 320
+    font = ImageFont.truetype(str(FONT_PATH), size)
+    while size > 60 and draw.textlength(text, font=font) > max_width:
+        size -= 12
+        font = ImageFont.truetype(str(FONT_PATH), size)
+    draw.text((cx, top_y), text, font=font, anchor="ma",
+              fill="white", stroke_width=stroke_px, stroke_fill="black")
+
+
 def generate_artwork(theme: str, count: int, output_dir: str | Path, dpi: int = 300, line_width_pt: float = 2.4) -> list[Path]:
     if theme != "fruit" and theme not in THEME_DESIGNS:
         raise ValueError(f"Unsupported theme: {theme}. Supported themes: fruit, flowers, toys, birds, animals, professions")
@@ -158,15 +173,20 @@ def generate_artwork(theme: str, count: int, output_dir: str | Path, dpi: int = 
         designs = DESIGNS if theme == "fruit" else THEME_DESIGNS[theme]
         name = designs[index % len(designs)]
         if theme == "fruit":
-            fruit_scales = {"banana": 1600, "watermelon": 1750, "pineapple": 1400, "lemon": 1500}
-            scale = fruit_scales.get(name, 1650)
+            fruit_scales = {"banana": 1500, "watermelon": 1600, "pineapple": 1250, "lemon": 1400, "grapes": 1350, "cherries": 1350}
+            scale = fruit_scales.get(name, 1500)
         else:
             scale = 1320 if index % 3 else 1240
-        cx, cy = PAGE_W // 2, PAGE_H // 2 + (index % 2) * 30
+        cx, cy = PAGE_W // 2, PAGE_H // 2 - 230 + (index % 2) * 30
         if theme == "fruit":
             _fruit(draw, name, cx, cy, scale, line_px, index)
         else:
             draw_theme_art(draw,theme,name,cx,cy,scale,line_px,index)
+        ink = ImageOps.invert(image.convert("L")).getbbox()
+        if ink:
+            _label(draw, name.upper(), cx, ink[3] + 150, 1900, max(6, line_px // 4))
+        # Flatten any antialiased text edges to pure black/white for the binary-palette gate.
+        image = image.convert("L").point(lambda v: 0 if v < 128 else 255).convert("RGB")
         safe_name=name.replace(" ","_")
         path = output / f"{theme}_{index+1:02d}_{safe_name}.png"
         image.save(path, format="PNG", dpi=(dpi,dpi), optimize=True)

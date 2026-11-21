@@ -32,3 +32,7 @@ Checked: 2026-11-16. Versions are pinned to avoid unreviewed drift. Recheck GitH
 - pypdf releases: https://github.com/py-pdf/pypdf/releases
 - pypdf security advisories: https://github.com/py-pdf/pypdf/security/advisories
 - actionlint releases and license: https://github.com/rhysd/actionlint/releases and https://github.com/rhysd/actionlint/blob/main/LICENSE.txt
+
+## Fonts
+
+- assets/fonts/DejaVuSans-Bold.ttf - DejaVu Sans Bold (Bitstream Vera license, permissive free license; embedding in produced PDFs/books is allowed). Used for the colorable name labels in generated interior artwork. Source: standard DejaVu distribution (dejavu-fonts.github.io).
