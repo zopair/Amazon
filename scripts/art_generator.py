@@ -37,6 +37,38 @@ def _leaf(draw, cx, cy, scale, width):
     _line(draw, pts, width)
     _line(draw, [(cx,cy),(cx+scale*1.1,cy-scale*.08)], max(3,width//3))
 
+def _face(draw, fx, fy, s, width, scale=1.0):
+    """Kawaii face: shiny filled eyes, wide smile, colorable cheek ovals."""
+    s = s * scale
+    eye_dx, eye_rx, eye_ry = s*.16, s*.055, s*.08
+    for ex in (fx-eye_dx, fx+eye_dx):
+        draw.ellipse((ex-eye_rx, fy-eye_ry, ex+eye_rx, fy+eye_ry), fill=0)
+        hl = eye_rx*.42
+        draw.ellipse((ex-eye_rx*.4-hl, fy-eye_ry*.45-hl, ex-eye_rx*.4+hl, fy-eye_ry*.45+hl), fill="white")
+    mw, mh = s*.13, s*.11
+    my = fy + s*.15
+    draw.arc((fx-mw, my-mh, fx+mw, my+mh*1.25), start=10, end=170, fill=0, width=max(4, int(width*.55)))
+    for cxo in (fx-s*.31, fx+s*.31):
+        crx, cry = s*.08, s*.055
+        draw.ellipse((cxo-crx, fy+s*.10-cry, cxo+crx, fy+s*.10+cry), outline=0, width=max(4, width//3))
+
+def _sparkle(draw, sx, sy, r, width):
+    q = r*.28
+    pts = [(sx,sy-r),(sx+q,sy-q),(sx+r,sy),(sx+q,sy+q),(sx,sy+r),(sx-q,sy+q),(sx-r,sy),(sx-q,sy-q),(sx,sy-r)]
+    _line(draw, pts, max(4, width//2))
+
+def _heart(draw, hx, hy, r, width):
+    pts = _bezier((hx,hy+r*.9),(hx-r*1.25,hy+r*.05),(hx-r*.62,hy-r*.95),(hx,hy-r*.3))
+    pts += _bezier((hx,hy-r*.3),(hx+r*.62,hy-r*.95),(hx+r*1.25,hy+r*.05),(hx,hy+r*.9))[1:]
+    _line(draw, pts, max(4, width//2))
+
+def _accents(draw, x, y, s, width):
+    """Small colorable companions around the subject, as in bold-and-easy bestsellers."""
+    _sparkle(draw, x-s*.58, y-s*.5, s*.06, width)
+    _heart(draw, x+s*.56, y-s*.4, s*.06, width)
+    r = s*.035
+    draw.ellipse((x+s*.52-r, y+s*.5-r, x+s*.52+r, y+s*.5+r), outline=0, width=max(4, width//3))
+
 def _fruit(draw, name, cx, cy, s, width, variant=0):
     x, y = cx, cy
     if name == "apple":
@@ -46,16 +78,19 @@ def _fruit(draw, name, cx, cy, s, width, variant=0):
         _line(draw, _bezier((x,y-s*.18),(x+s*.08,y-s*.2),(x+s*.22,y-s*.34),(x+s*.42,y-s*.02)), width)
         _line(draw, [(x,y-s*.18),(x+variant*8,y-s*.48)], width)
         _leaf(draw,x+variant*8,y-s*.43,s*.36,width)
+        _face(draw, x, y-s*.02, s, width)
     elif name == "banana":
         outer=_bezier((x-s*.55,y-s*.25),(x-s*.38,y+s*.35),(x+s*.18,y+s*.52),(x+s*.58,y+s*.12))
         inner=_bezier((x-s*.35,y-s*.12),(x-s*.12,y+s*.16),(x+s*.18,y+s*.25),(x+s*.4,y+s*.05))
         _line(draw, outer+[(x+s*.4,y+s*.05)]+inner[::-1]+[(x-s*.55,y-s*.25)],width)
         _line(draw,[(x-s*.55,y-s*.25),(x-s*.64,y-s*.32)],width)
         _line(draw,[(x+s*.58,y+s*.12),(x+s*.66,y+s*.04)],width)
+        _face(draw, x-s*.02, y+s*.05, s, width, scale=.75)
     elif name == "orange":
         draw.ellipse((x-s*.43,y-s*.43,x+s*.43,y+s*.43),outline=0,width=width)
         draw.ellipse((x-s*.07,y-s*.49,x+s*.07,y-s*.35),outline=0,width=max(3,width//2))
         _leaf(draw,x+ s*.02,y-s*.42,s*.34,width)
+        _face(draw, x, y+s*.02, s, width)
     elif name == "pear":
         pts=_bezier((x,y-s*.48),(x-s*.12,y-s*.28),(x-s*.43,y-s*.1),(x-s*.43,y+s*.18))
         pts+=_bezier((x-s*.43,y+s*.18),(x-s*.43,y+s*.55),(x-s*.2,y+s*.58),(x,y+s*.55))[1:]
@@ -64,6 +99,7 @@ def _fruit(draw, name, cx, cy, s, width, variant=0):
         _line(draw,pts,width)
         _line(draw,[(x,y-s*.48),(x+variant*5,y-s*.67)],width)
         _leaf(draw,x,y-s*.63,s*.32,width)
+        _face(draw, x, y+s*.22, s, width, scale=.9)
     elif name == "grapes":
         # Four compact rows with visible gaps so every grape remains individually colorable.
         for row in range(4):
@@ -74,6 +110,7 @@ def _fruit(draw, name, cx, cy, s, width, variant=0):
                 draw.ellipse((gx-radius,gy-radius,gx+radius,gy+radius),outline=0,width=max(4,width-2))
         _line(draw,[(x,y-s*.35),(x+variant*5,y-s*.62)],width)
         _leaf(draw,x,y-s*.58,s*.42,width)
+        _face(draw, x, y+s*.385, s, width, scale=.30)
     elif name == "watermelon":
         # Upright wedge: a taller silhouette reads clearly and uses the page area better.
         top=(x,y-s*.52)
@@ -85,6 +122,7 @@ def _fruit(draw, name, cx, cy, s, width, variant=0):
         _line(draw,inner,width)
         for dx,dy in [(-.22,.04),(0,-.12),(.22,.04),(-.1,.20),(.12,.20)]:
             draw.ellipse((x+s*dx-s*.018,y+s*dy-s*.03,x+s*dx+s*.018,y+s*dy+s*.03),outline=0,width=max(4,width//3))
+        _face(draw, x, y-s*.06, s, width, scale=.9)
     elif name == "strawberry":
         pts=_bezier((x,y-s*.45),(x-s*.1,y-s*.3),(x-s*.48,y-s*.12),(x-s*.4,y+s*.18))
         pts+=_bezier((x-s*.4,y+s*.18),(x-s*.32,y+s*.48),(x-s*.08,y+s*.55),(x,y+s*.62))[1:]
@@ -94,24 +132,22 @@ def _fruit(draw, name, cx, cy, s, width, variant=0):
         for dx,dy in [(-.2,-.12),(.0,-.05),(.2,-.12),(-.23,.12),(.0,.18),(.23,.12),(-.1,.37),(.12,.38)]:
             draw.ellipse((x+s*dx-s*.013,y+s*dy-s*.02,x+s*dx+s*.013,y+s*dy+s*.02),outline=0,width=max(4,width//4))
         _leaf(draw,x-s*.16,y-s*.38,s*.28,width)
+        _face(draw, x, y+s*.1, s, width, scale=.8)
     elif name == "pineapple":
-        # Keep the simple lattice strictly inside the oval body.
         rx, ry = s*.38, s*.325
         body_cy = y+s*.205
         draw.ellipse((x-rx,body_cy-ry,x+rx,body_cy+ry),outline=0,width=width)
-        for step in range(-2,3):
-            xx=x+step*s*.12
-            normalized=abs(xx-x)/rx
-            half=ry*math.sqrt(max(0.0,1-normalized*normalized))
-            _line(draw,[(xx,body_cy-half),(xx,body_cy+half)],max(4,width//2))
-        for step in range(-2,3):
-            yy=body_cy+step*s*.12
-            normalized=abs(yy-body_cy)/ry
-            half=rx*math.sqrt(max(0.0,1-normalized*normalized))
-            _line(draw,[(x-half,yy),(x+half,yy)],max(4,width//2))
-        for j in range(5):
-            xx=x+(j-2)*s*.13
-            _line(draw,_bezier((x,y-s*.15),(xx-s*.12,y-s*.48),(xx+s*.06,y-s*.72),(xx+s*.12,y-s*.88)),width)
+        # Sparse chunky texture diamonds, kept clear of the face area.
+        for dx,dy in [(-.19,-.12),(.19,-.12),(-.19,.42),(.19,.42),(0,.5)]:
+            px,py=x+s*dx,body_cy+s*dy
+            r=s*.032
+            _line(draw,[(px,py-r),(px+r*.8,py),(px,py+r),(px-r*.8,py),(px,py-r)],max(4,width//3))
+        for j,spread in [(-1,-.42),(0,0),(1,.42)]:
+            tipx = x+spread*s
+            left=_bezier((x,y-s*.1),(x+spread*s*.3,y-s*.5),(tipx-s*.1,y-s*.72),(tipx,y-s*.86))
+            right=_bezier((tipx,y-s*.86),(tipx+s*.1,y-s*.72),(x+spread*s*.3+s*.08,y-s*.45),(x+s*.06,y-s*.12))
+            _line(draw,left+right[1:],width)
+        _face(draw, x, body_cy-s*.02, s, width, scale=.85)
     elif name == "lemon":
         pts=_bezier((x-s*.52,y),(x-s*.35,y-s*.4),(x+s*.35,y-s*.4),(x+s*.52,y))
         pts+=_bezier((x+s*.52,y),(x+s*.35,y+s*.4),(x-s*.35,y+s*.4),(x-s*.52,y))[1:]
@@ -119,17 +155,21 @@ def _fruit(draw, name, cx, cy, s, width, variant=0):
         _leaf(draw,x+s*.2,y-s*.22,s*.3,width)
         _line(draw,[(x-s*.52,y),(x-s*.65,y-s*.05)],width)
         _line(draw,[(x+s*.52,y),(x+s*.65,y-s*.05)],width)
+        _face(draw, x, y, s, width, scale=.9)
     elif name == "cherries":
         _line(draw,_bezier((x-s*.12,y-s*.1),(x-s*.3,y-s*.55),(x+s*.12,y-s*.62),(x+s*.15,y-s*.7)),width)
         _line(draw,_bezier((x+s*.15,y-s*.1),(x+s*.25,y-s*.48),(x+s*.48,y-s*.55),(x+s*.5,y-s*.65)),width)
         draw.ellipse((x-s*.48,y-s*.05,x+s*.04,y+s*.48),outline=0,width=width)
         draw.ellipse((x+s*.1,y-s*.05,x+s*.62,y+s*.48),outline=0,width=width)
         _leaf(draw,x+s*.08,y-s*.62,s*.35,width)
+        _face(draw, x-s*.22, y+s*.18, s, width, scale=.42)
+        _face(draw, x+s*.36, y+s*.18, s, width, scale=.42)
     elif name == "peach":
         draw.ellipse((x-s*.48,y-s*.42,x+s*.48,y+s*.5),outline=0,width=width)
-        _line(draw,_bezier((x,y-s*.35),(x-s*.14,y-s*.12),(x-s*.12,y+s*.18),(x,y+s*.36)),max(4,width//2))
+        _line(draw,_bezier((x-s*.08,y-s*.35),(x-s*.24,y-s*.12),(x-s*.22,y+s*.18),(x-s*.08,y+s*.38)),max(4,width//2))
         _line(draw,[(x,y-s*.42),(x+variant*5,y-s*.58)],width)
         _leaf(draw,x,y-s*.55,s*.28,width)
+        _face(draw, x+s*.1, y, s, width, scale=.9)
     elif name == "avocado":
         pts=_bezier((x,y-s*.55),(x-s*.25,y-s*.48),(x-s*.52,y-s*.05),(x-s*.42,y+s*.32))
         pts+=_bezier((x-s*.42,y+s*.32),(x-s*.3,y+s*.62),(x+s*.3,y+s*.62),(x+s*.42,y+s*.32))[1:]
@@ -137,6 +177,8 @@ def _fruit(draw, name, cx, cy, s, width, variant=0):
         _line(draw,pts,width)
         draw.ellipse((x-s*.18,y+s*.05,x+s*.18,y+s*.4),outline=0,width=width)
         _leaf(draw,x+s*.1,y-s*.45,s*.28,width)
+        _face(draw, x, y-s*.2, s, width, scale=.75)
+    _accents(draw, x, y, s, width)
 
 
 FONT_PATH = Path(__file__).resolve().parent.parent / "assets" / "fonts" / "DejaVuSans-Bold.ttf"
@@ -144,7 +186,7 @@ FONT_PATH = Path(__file__).resolve().parent.parent / "assets" / "fonts" / "DejaV
 
 def _label(draw, text, cx, top_y, max_width, stroke_px):
     """Large colorable name label: bold caps, white fill, thick black outline."""
-    size = 320
+    size = 300
     font = ImageFont.truetype(str(FONT_PATH), size)
     while size > 60 and draw.textlength(text, font=font) > max_width:
         size -= 12
@@ -173,7 +215,7 @@ def generate_artwork(theme: str, count: int, output_dir: str | Path, dpi: int = 
         designs = DESIGNS if theme == "fruit" else THEME_DESIGNS[theme]
         name = designs[index % len(designs)]
         if theme == "fruit":
-            fruit_scales = {"banana": 1500, "watermelon": 1600, "pineapple": 1250, "lemon": 1400, "grapes": 1350, "cherries": 1350}
+            fruit_scales = {"pear": 1400, "watermelon": 1400, "strawberry": 1400, "avocado": 1400, "pineapple": 1180, "lemon": 1400, "grapes": 1350, "cherries": 1350}
             scale = fruit_scales.get(name, 1500)
         else:
             scale = 1320 if index % 3 else 1240
@@ -184,7 +226,7 @@ def generate_artwork(theme: str, count: int, output_dir: str | Path, dpi: int = 
             draw_theme_art(draw,theme,name,cx,cy,scale,line_px,index)
         ink = ImageOps.invert(image.convert("L")).getbbox()
         if ink:
-            _label(draw, name.upper(), cx, ink[3] + 150, 1900, max(6, line_px // 4))
+            _label(draw, name.upper(), cx, ink[3] + 100, 1800, max(6, line_px // 4))
         # Flatten any antialiased text edges to pure black/white for the binary-palette gate.
         image = image.convert("L").point(lambda v: 0 if v < 128 else 255).convert("RGB")
         safe_name=name.replace(" ","_")
