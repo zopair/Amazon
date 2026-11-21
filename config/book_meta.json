@@ -26,7 +26,7 @@
     "blank_reverse_pages": true,
     "illustration_page_parity": "odd",
     "min_dpi": 300,
-    "line_width_pt": 2.4,
+    "line_width_pt": 9.0,
     "min_line_width_pt": 0.75,
     "inside_margin_in": 0.375,
     "outside_margin_in": 0.375,
@@ -45,7 +45,7 @@
     "image_directory": "assets/images",
     "generated_image_directory": "build/images",
     "illustration_count": 12,
-    "art_style": "original bold closed outlines, simple large shapes, no grayscale, no shading, no gradients, no text inside artwork"
+    "art_style": "original extra-bold closed outlines (~9 pt), simple large chunky shapes, each illustration labeled with its English name in large colorable outline letters, no grayscale, no shading, no gradients"
   },
   "output": {
     "interior_pdf": "build/output/fruit-friends-interior.pdf",

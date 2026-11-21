@@ -13,7 +13,7 @@ class FruitPilotCompositionTests(unittest.TestCase):
         from scripts.artwork_quality import audit_artwork_directory
 
         with tempfile.TemporaryDirectory() as tmp:
-            generate_artwork("fruit", 12, tmp, dpi=300, line_width_pt=2.4)
+            generate_artwork("fruit", 12, tmp, dpi=300, line_width_pt=9.0)
             report = audit_artwork_directory(
                 tmp, Path("config/artwork_generation_spec.json")
             )
@@ -24,7 +24,7 @@ class FruitPilotCompositionTests(unittest.TestCase):
 
     def test_banana_and_watermelon_use_larger_readable_compositions(self):
         with tempfile.TemporaryDirectory() as tmp:
-            paths = generate_artwork("fruit", 12, tmp, dpi=300, line_width_pt=2.4)
+            paths = generate_artwork("fruit", 12, tmp, dpi=300, line_width_pt=9.0)
             by_name = {path.name: path for path in paths}
             for filename in ("fruit_02_banana.png", "fruit_06_watermelon.png"):
                 with Image.open(by_name[filename]) as image:

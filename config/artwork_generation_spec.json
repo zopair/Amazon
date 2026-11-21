@@ -16,8 +16,11 @@
   "rendering": {
     "background_hex": "#FFFFFF",
     "contour_hex": "#000000",
-    "final_palette": ["#000000", "#FFFFFF"],
-    "target_line_width_pt": 2.4,
+    "final_palette": [
+      "#000000",
+      "#FFFFFF"
+    ],
+    "target_line_width_pt": 9.0,
     "minimum_line_width_pt": 0.75,
     "closed_coloring_contours": true,
     "allow_gray": false,
@@ -34,8 +37,8 @@
     "dominant_subject_count_min": 1,
     "dominant_subject_count_max": 1,
     "safe_inset_fraction": 0.08,
-    "target_subject_canvas_occupancy_min": 0.20,
-    "target_subject_canvas_occupancy_max": 0.50,
+    "target_subject_canvas_occupancy_min": 0.2,
+    "target_subject_canvas_occupancy_max": 0.5,
     "generous_white_space": true,
     "cropping_allowed": false,
     "tiny_coloring_regions_allowed": false,
@@ -78,18 +81,54 @@
     "theme": "fruit",
     "design_count": 12,
     "subjects": [
-      {"id": "apple", "composition": "Broad rounded body, clear top cleft, short stem, one large leaf."},
-      {"id": "banana", "composition": "Single curved banana with both ends visibly capped and one continuous closed outer contour."},
-      {"id": "orange", "composition": "Near-circular fruit with a small stem and leaf; no tiny peel dots."},
-      {"id": "pear", "composition": "Narrow neck and wider lower body with a clear stem and leaf."},
-      {"id": "grapes", "composition": "Compact bunch of large, clearly separated grape forms; avoid tiny overlapping circles."},
-      {"id": "watermelon", "composition": "One large wedge with a closed rind boundary and a few large seeds."},
-      {"id": "strawberry", "composition": "Broad heart-like silhouette, leafy crown, sparse large seed marks."},
-      {"id": "pineapple", "composition": "Oval body with a closed outer contour, simplified broad diagonal lattice, distinct crown leaves."},
-      {"id": "lemon", "composition": "Elongated oval with two clear end points and one leaf; no detached contour fragments."},
-      {"id": "cherries", "composition": "Two large cherries with closed bodies, two readable stems, and one leaf."},
-      {"id": "peach", "composition": "Rounded body with a clear shallow cleft, minimal seam, and one leaf."},
-      {"id": "avocado", "composition": "Distinct pear-like outer silhouette and one large pit; no tiny internal details."}
+      {
+        "id": "apple",
+        "composition": "Broad rounded body, clear top cleft, short stem, one large leaf."
+      },
+      {
+        "id": "banana",
+        "composition": "Single curved banana with both ends visibly capped and one continuous closed outer contour."
+      },
+      {
+        "id": "orange",
+        "composition": "Near-circular fruit with a small stem and leaf; no tiny peel dots."
+      },
+      {
+        "id": "pear",
+        "composition": "Narrow neck and wider lower body with a clear stem and leaf."
+      },
+      {
+        "id": "grapes",
+        "composition": "Compact bunch of large, clearly separated grape forms; avoid tiny overlapping circles."
+      },
+      {
+        "id": "watermelon",
+        "composition": "One large wedge with a closed rind boundary and a few large seeds."
+      },
+      {
+        "id": "strawberry",
+        "composition": "Broad heart-like silhouette, leafy crown, sparse large seed marks."
+      },
+      {
+        "id": "pineapple",
+        "composition": "Oval body with a closed outer contour, simplified broad diagonal lattice, distinct crown leaves."
+      },
+      {
+        "id": "lemon",
+        "composition": "Elongated oval with two clear end points and one leaf; no detached contour fragments."
+      },
+      {
+        "id": "cherries",
+        "composition": "Two large cherries with closed bodies, two readable stems, and one leaf."
+      },
+      {
+        "id": "peach",
+        "composition": "Rounded body with a clear shallow cleft, minimal seam, and one leaf."
+      },
+      {
+        "id": "avocado",
+        "composition": "Distinct pear-like outer silhouette and one large pit; no tiny internal details."
+      }
     ],
     "production_asset_directory": "assets/images/fruit/",
     "pilot_output_must_remain_unapproved_until_human_review": true,
