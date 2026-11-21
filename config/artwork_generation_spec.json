@@ -79,7 +79,7 @@
   "pilot": {
     "book_id": "fruit-friends",
     "theme": "fruit",
-    "design_count": 25,
+    "design_count": 50,
     "subjects": [
       {
         "id": "apple",
@@ -180,6 +180,106 @@
       {
         "id": "starfruit",
         "composition": "Five-point star silhouette with rounded readability."
+      },
+      {
+        "id": "carrot",
+        "composition": "Tapered carrot with leafy top and two ridge lines."
+      },
+      {
+        "id": "broccoli",
+        "composition": "Cloud floret head on a thick trunk."
+      },
+      {
+        "id": "tomato",
+        "composition": "Round tomato with star sepals and short stem."
+      },
+      {
+        "id": "corn",
+        "composition": "Cob with two kernel lines and husk leaves at the base."
+      },
+      {
+        "id": "eggplant",
+        "composition": "Oval eggplant with a zigzag calyx cap."
+      },
+      {
+        "id": "pumpkin",
+        "composition": "Lobed round pumpkin with a curled stem."
+      },
+      {
+        "id": "mushroom",
+        "composition": "Dome cap with spots on a sturdy stem."
+      },
+      {
+        "id": "bell pepper",
+        "composition": "Three-lobed pepper with a curved stem."
+      },
+      {
+        "id": "cucumber",
+        "composition": "Long rounded cucumber with two stripe lines."
+      },
+      {
+        "id": "peas",
+        "composition": "Curved open pod with three large peas and a tendril."
+      },
+      {
+        "id": "potato",
+        "composition": "Lumpy oval potato with three small eye dots."
+      },
+      {
+        "id": "onion",
+        "composition": "Teardrop onion with sprout tips and two crease lines."
+      },
+      {
+        "id": "garlic",
+        "composition": "Lobed garlic bulb with a pointed top."
+      },
+      {
+        "id": "cabbage",
+        "composition": "Round cabbage with two broad leaf arcs."
+      },
+      {
+        "id": "radish",
+        "composition": "Round radish with root tail and leafy top."
+      },
+      {
+        "id": "beet",
+        "composition": "Heart-root beet with three tall leaves."
+      },
+      {
+        "id": "cauliflower",
+        "composition": "Cloud curd with a two-leaf skirt."
+      },
+      {
+        "id": "celery",
+        "composition": "Wide stalk bundle with leafy tops."
+      },
+      {
+        "id": "chili pepper",
+        "composition": "Curved chili with a small stem."
+      },
+      {
+        "id": "sweet potato",
+        "composition": "Lumpy elongated sweet potato."
+      },
+      {
+        "id": "zucchini",
+        "composition": "Long plain zucchini with a small stem."
+      },
+      {
+        "id": "spinach",
+        "composition": "Three overlapping leaves with short stems."
+      },
+      {
+        "id": "artichoke",
+        "composition": "Teardrop artichoke with two petal arcs."
+      },
+      {
+        "id": "asparagus",
+        "composition": "Three spears with triangle tips, small face on the center spear."
+      },
+      {
+        "id": "turnip",
+        "composition": "Round turnip with root tail and leafy top."
       }
     ],
     "production_asset_directory": "assets/images/fruit/",
