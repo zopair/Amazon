@@ -79,7 +79,7 @@
   "pilot": {
     "book_id": "fruit-friends",
     "theme": "fruit",
-    "design_count": 12,
+    "design_count": 25,
     "subjects": [
       {
         "id": "apple",
@@ -128,6 +128,58 @@
       {
         "id": "avocado",
         "composition": "Distinct pear-like outer silhouette and one large pit; no tiny internal details."
+      },
+      {
+        "id": "mango",
+        "composition": "Plump rounded mango body with a short stem and one leaf."
+      },
+      {
+        "id": "kiwi",
+        "composition": "Fuzzy oval kiwi with sparse short rim ticks; no tiny seeds."
+      },
+      {
+        "id": "coconut",
+        "composition": "Round coconut with three large shell dots at the top."
+      },
+      {
+        "id": "blueberries",
+        "composition": "Three large berries with small crown marks; clearly separated."
+      },
+      {
+        "id": "raspberry",
+        "composition": "One large raspberry of six big drupelets with a leaf."
+      },
+      {
+        "id": "melon",
+        "composition": "Half-round melon slice with a clear rind and two large seeds."
+      },
+      {
+        "id": "papaya",
+        "composition": "Elongated rounded papaya with a short stem."
+      },
+      {
+        "id": "pomegranate",
+        "composition": "Round body with a bold zigzag calyx crown."
+      },
+      {
+        "id": "plum",
+        "composition": "Oval plum with a gentle seam, short stem and leaf."
+      },
+      {
+        "id": "apricot",
+        "composition": "Round apricot with an off-center seam and short stem."
+      },
+      {
+        "id": "fig",
+        "composition": "Teardrop fig silhouette with a short stem."
+      },
+      {
+        "id": "dragonfruit",
+        "composition": "Oval dragon fruit with bold flame spikes on both sides."
+      },
+      {
+        "id": "starfruit",
+        "composition": "Five-point star silhouette with rounded readability."
       }
     ],
     "production_asset_directory": "assets/images/fruit/",

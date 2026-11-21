@@ -9,6 +9,8 @@ PAGE_W, PAGE_H = 2550, 3300
 DESIGNS = [
     "apple", "banana", "orange", "pear", "grapes", "watermelon",
     "strawberry", "pineapple", "lemon", "cherries", "peach", "avocado",
+    "mango", "kiwi", "coconut", "blueberries", "raspberry", "melon",
+    "papaya", "pomegranate", "plum", "apricot", "fig", "dragonfruit", "starfruit",
 ]
 THEME_DESIGNS = {
     "flowers": FLOWERS,
@@ -178,6 +180,91 @@ def _fruit(draw, name, cx, cy, s, width, variant=0):
         draw.ellipse((x-s*.18,y+s*.05,x+s*.18,y+s*.4),outline=0,width=width)
         _leaf(draw,x+s*.1,y-s*.45,s*.28,width)
         _face(draw, x, y-s*.2, s, width, scale=.75)
+    elif name == "mango":
+        pts=_bezier((x,y-s*.42),(x-s*.4,y-s*.42),(x-s*.52,y-s*.05),(x-s*.38,y+s*.28))
+        pts+=_bezier((x-s*.38,y+s*.28),(x-s*.2,y+s*.55),(x+s*.12,y+s*.52),(x+s*.3,y+s*.3))[1:]
+        pts+=_bezier((x+s*.3,y+s*.3),(x+s*.5,y+s*.02),(x+s*.42,y-s*.28),(x,y-s*.42))[1:]
+        _line(draw,pts,width)
+        _line(draw,[(x,y-s*.42),(x+variant*5,y-s*.56)],width)
+        _leaf(draw,x+variant*5,y-s*.52,s*.3,width)
+        _face(draw, x, y-s*.02, s, width, scale=.95)
+    elif name == "kiwi":
+        draw.ellipse((x-s*.42,y-s*.46,x+s*.42,y+s*.46),outline=0,width=width)
+        for ang in range(0,360,45):
+            a=math.radians(ang+22)
+            _line(draw,[(x+math.cos(a)*s*.42,y+math.sin(a)*s*.46),(x+math.cos(a)*s*.5,y+math.sin(a)*s*.54)],max(4,width//2))
+        _face(draw, x, y, s, width, scale=.9)
+    elif name == "coconut":
+        draw.ellipse((x-s*.46,y-s*.44,x+s*.46,y+s*.48),outline=0,width=width)
+        for dx in (-.14,0,.14):
+            draw.ellipse((x+s*dx-s*.035,y-s*.28-s*.04,x+s*dx+s*.035,y-s*.28+s*.04),outline=0,width=max(4,width//2))
+        _face(draw, x, y+s*.08, s, width, scale=.9)
+    elif name == "blueberries":
+        for bx,by in [(-.3,.12),(.3,.12),(0,-.26)]:
+            draw.ellipse((x+s*bx-s*.26,y+s*by-s*.26,x+s*bx+s*.26,y+s*by+s*.26),outline=0,width=width)
+            _sparkle(draw, x+s*bx, y+s*by-s*.26, s*.05, max(4,width//2))
+            _face(draw, x+s*bx, y+s*by, s, width, scale=.4)
+    elif name == "raspberry":
+        for dx,dy in [(0,-.3),(-.22,-.1),(.22,-.1),(-.22,.14),(.22,.14),(0,.34)]:
+            draw.ellipse((x+s*dx-s*.17,y+s*dy-s*.17,x+s*dx+s*.17,y+s*dy+s*.17),outline=0,width=max(4,width-2))
+        _leaf(draw,x,y-s*.46,s*.3,width)
+        _face(draw, x, y-s*.3, s, width, scale=.34)
+    elif name == "melon":
+        left=(x-s*.55,y-s*.15); right=(x+s*.55,y-s*.15)
+        arc=_bezier(left,(x-s*.42,y+s*.5),(x+s*.42,y+s*.5),right)
+        _line(draw,[left]+arc[1:]+[right,left],width)
+        # Rind band: a parallel curve just above the bottom outer edge.
+        inner=_bezier((x-s*.47,y-s*.06),(x-s*.34,y+s*.34),(x+s*.34,y+s*.34),(x+s*.47,y-s*.06))
+        _line(draw,inner,max(4,width//2))
+        for dx in (-.18,.18):
+            draw.ellipse((x+s*dx-s*.02,y+s*.24-s*.028,x+s*dx+s*.02,y+s*.24+s*.028),outline=0,width=max(4,width//3))
+        _face(draw, x, y+s*.02, s, width, scale=.8)
+    elif name == "papaya":
+        pts=_bezier((x,y-s*.5),(x-s*.3,y-s*.45),(x-s*.42,y-s*.05),(x-s*.34,y+s*.3))
+        pts+=_bezier((x-s*.34,y+s*.3),(x-s*.2,y+s*.55),(x+s*.2,y+s*.55),(x+s*.34,y+s*.3))[1:]
+        pts+=_bezier((x+s*.34,y+s*.3),(x+s*.42,y-s*.05),(x+s*.3,y-s*.45),(x,y-s*.5))[1:]
+        _line(draw,pts,width)
+        _line(draw,[(x,y-s*.5),(x+variant*5,y-s*.62)],width)
+        _face(draw, x, y, s, width, scale=.9)
+    elif name == "pomegranate":
+        draw.ellipse((x-s*.44,y-s*.36,x+s*.44,y+s*.5),outline=0,width=width)
+        crown=[(x-s*.15,y-s*.3),(x-s*.18,y-s*.52),(x-s*.07,y-s*.44),(x,y-s*.58),(x+s*.07,y-s*.44),(x+s*.18,y-s*.52),(x+s*.15,y-s*.3)]
+        _line(draw,crown,width)
+        _face(draw, x, y+s*.06, s, width, scale=.9)
+    elif name == "plum":
+        draw.ellipse((x-s*.4,y-s*.46,x+s*.4,y+s*.46),outline=0,width=width)
+        _line(draw,_bezier((x-s*.06,y-s*.44),(x-s*.14,y-s*.1),(x-s*.14,y+s*.1),(x-s*.06,y+s*.44)),max(4,width//2))
+        _line(draw,[(x,y-s*.46),(x+variant*5,y-s*.6)],width)
+        _leaf(draw,x+variant*5,y-s*.56,s*.3,width)
+        _face(draw, x+s*.06, y, s, width, scale=.85)
+    elif name == "apricot":
+        draw.ellipse((x-s*.42,y-s*.42,x+s*.42,y+s*.42),outline=0,width=width)
+        _line(draw,_bezier((x-s*.12,y-s*.4),(x-s*.22,y-s*.1),(x-s*.22,y+s*.1),(x-s*.12,y+s*.4)),max(4,width//2))
+        _line(draw,[(x-s*.05,y-s*.42),(x+variant*5-s*.05,y-s*.56)],width)
+        _face(draw, x+s*.08, y, s, width, scale=.85)
+    elif name == "fig":
+        pts=_bezier((x,y-s*.55),(x-s*.3,y-s*.45),(x-s*.5,y-s*.05),(x-s*.38,y+s*.28))
+        pts+=_bezier((x-s*.38,y+s*.28),(x-s*.22,y+s*.55),(x+s*.22,y+s*.55),(x+s*.38,y+s*.28))[1:]
+        pts+=_bezier((x+s*.38,y+s*.28),(x+s*.5,y-s*.05),(x+s*.3,y-s*.45),(x,y-s*.55))[1:]
+        _line(draw,pts,width)
+        _line(draw,[(x,y-s*.55),(x+variant*5,y-s*.68)],width)
+        _face(draw, x, y, s, width, scale=.9)
+    elif name == "dragonfruit":
+        draw.ellipse((x-s*.36,y-s*.46,x+s*.36,y+s*.46),outline=0,width=width)
+        for sy in (-.25,.05,.35):
+            for sgn in (-1,1):
+                bx=x+sgn*s*.34; by=y+sy*s
+                _line(draw,_bezier((bx,by-s*.1),(bx+sgn*s*.22,by-s*.12),(bx+sgn*s*.26,by+s*.02),(bx,by+s*.12)),width)
+        _face(draw, x, y, s, width, scale=.9)
+    elif name == "starfruit":
+        pts=[]
+        for i in range(5):
+            a=math.radians(-90+i*72); a2=math.radians(-90+i*72+36)
+            pts.append((x+math.cos(a)*s*.5, y+math.sin(a)*s*.5))
+            pts.append((x+math.cos(a2)*s*.24, y+math.sin(a2)*s*.24))
+        pts.append(pts[0])
+        _line(draw,pts,width)
+        _face(draw, x, y, s, width, scale=.8)
     _accents(draw, x, y, s, width)
 
 
@@ -198,8 +285,9 @@ def _label(draw, text, cx, top_y, max_width, stroke_px):
 def generate_artwork(theme: str, count: int, output_dir: str | Path, dpi: int = 300, line_width_pt: float = 2.4) -> list[Path]:
     if theme != "fruit" and theme not in THEME_DESIGNS:
         raise ValueError(f"Unsupported theme: {theme}. Supported themes: fruit, flowers, toys, birds, animals, professions")
-    if count < 1 or count > 12:
-        raise ValueError("the built-in generator provides 12 distinct motifs per theme; larger books require an exact set of approved original artwork files")
+    max_count = len(DESIGNS) if theme == "fruit" else len(THEME_DESIGNS.get(theme, []))
+    if count < 1 or count > max_count:
+        raise ValueError(f"the built-in generator provides {max_count} distinct motifs for theme '{theme}'; larger books require an exact set of approved original artwork files")
     if dpi < 300:
         raise ValueError("artwork resolution must be at least 300 DPI")
     if line_width_pt < 0.75:
@@ -215,7 +303,7 @@ def generate_artwork(theme: str, count: int, output_dir: str | Path, dpi: int = 
         designs = DESIGNS if theme == "fruit" else THEME_DESIGNS[theme]
         name = designs[index % len(designs)]
         if theme == "fruit":
-            fruit_scales = {"pear": 1400, "watermelon": 1400, "strawberry": 1400, "avocado": 1400, "pineapple": 1180, "lemon": 1400, "grapes": 1350, "cherries": 1350}
+            fruit_scales = {"pear": 1400, "plum": 1450, "watermelon": 1400, "strawberry": 1400, "avocado": 1400, "pineapple": 1180, "lemon": 1400, "grapes": 1350, "cherries": 1350}
             scale = fruit_scales.get(name, 1500)
         else:
             scale = 1320 if index % 3 else 1240
