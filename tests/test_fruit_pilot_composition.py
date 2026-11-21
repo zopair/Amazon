@@ -41,5 +41,19 @@ class FruitPilotCompositionTests(unittest.TestCase):
                     self.assertLessEqual(bottom, 3036)
 
 
+    def test_full_25_motif_fruit_set_passes_the_composition_gate(self):
+        from scripts.artwork_quality import audit_artwork_directory
+
+        with tempfile.TemporaryDirectory() as tmp:
+            generate_artwork("fruit", 25, tmp, dpi=300, line_width_pt=9.0)
+            report = audit_artwork_directory(
+                tmp, Path("config/artwork_generation_spec.json")
+            )
+            self.assertEqual(report["status"], "PASS", report)
+            self.assertEqual(report["summary"]["asset_count"], 25)
+            self.assertEqual(report["summary"]["error_count"], 0)
+            self.assertEqual(report["summary"]["warning_count"], 0)
+
+
 if __name__ == "__main__":
     unittest.main()
