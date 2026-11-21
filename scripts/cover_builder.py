@@ -108,12 +108,12 @@ def build_cover(meta: dict, output_path: str | Path) -> Path:
     # Back cover copy is intentionally modest and remains within the safe area.
     pdf.setFillColor(_cmyk("#202020"))
     pdf.setFont("KdpVera-Bold",20)
-    pdf.drawString(back_x+36,height-92,"A fruity first coloring adventure!")
+    pdf.drawString(back_x+36,height-92,"A tasty first coloring adventure!")
     pdf.setFont("KdpVera",11)
     back_lines = [
-        "Meet a cheerful collection of familiar fruits.",
-        "Big, clear pictures give young artists room",
-        "to color, explore shapes, and have fun.",
+        "Meet a cheerful collection of friendly",
+        "fruits and veggies. Big, clear pictures give",
+        "young artists room to color and have fun.",
         "",
         "• Large 8.5 × 11 inch pages",
         "• Bold, easy-to-follow outlines",

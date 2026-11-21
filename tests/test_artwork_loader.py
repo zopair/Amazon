@@ -8,7 +8,7 @@ class ArtworkLoaderTests(unittest.TestCase):
     def test_refuses_to_repeat_generated_motifs_for_long_books(self):
         with tempfile.TemporaryDirectory() as tmp:
             with self.assertRaisesRegex(ValueError,"requires 13 unique approved artwork files"):
-                load_artwork("fruit",13,Path(tmp)/"assets",Path(tmp)/"generated",300,2.4)
+                load_artwork("flowers",13,Path(tmp)/"assets",Path(tmp)/"generated",300,2.4)
 
     def test_rejects_duplicate_approved_artwork(self):
         from PIL import Image, ImageDraw
