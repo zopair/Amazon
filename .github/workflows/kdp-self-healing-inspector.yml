@@ -54,6 +54,9 @@ jobs:
         with:
           python-version: '3.12'
 
+      - name: Install pinned workflow dependencies
+        run: python -m pip install --disable-pip-version-check -r requirements.txt
+
       - name: Download triggering workflow logs
         shell: bash
         run: |
