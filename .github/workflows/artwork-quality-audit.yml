@@ -84,7 +84,7 @@ jobs:
             --report build/artwork-quality-report.json \
             --contact-sheet build/artwork-contact-sheet.png
 
-      - name: Upload audit report and contact sheet
+      - name: Upload audit report, contact sheet, and full-size artwork
         if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -92,5 +92,6 @@ jobs:
           path: |
             build/artwork-quality-report.json
             build/artwork-contact-sheet.png
+            build/artwork-pilot/*.png
           if-no-files-found: warn
           retention-days: 14
