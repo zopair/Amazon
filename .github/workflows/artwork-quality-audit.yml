@@ -5,7 +5,10 @@ on:
     paths:
       - "scripts/art_generator.py"
       - "scripts/theme_art.py"
+      - "scripts/theme_christmas.py"
       - "scripts/artwork_quality.py"
+      - "scripts/artwork_audit_target.py"
+      - "tests/test_artwork_audit_target.py"
       - "config/artwork_generation_spec.json"
       - ".github/workflows/artwork-quality-audit.yml"
   workflow_dispatch:
@@ -21,6 +24,7 @@ on:
           - birds
           - animals
           - professions
+          - christmas
         default: fruit
 
 permissions:
@@ -48,15 +52,28 @@ jobs:
       - name: Install existing pinned dependencies
         run: python -m pip install --disable-pip-version-check -r requirements.txt
 
-      - name: Generate the 12-design review set
+      - name: Resolve review theme and design count
+        id: target
         env:
-          THEME: ${{ inputs.theme || 'fruit' }}
+          REQUESTED_THEME: ${{ github.event.inputs.theme || '' }}
+          EVENT_NAME: ${{ github.event_name }}
+          BASE_REF: ${{ github.event.pull_request.base.ref || '' }}
+          HEAD_REF: ${{ github.head_ref }}
+        run: python -m scripts.artwork_audit_target >> "$GITHUB_OUTPUT"
+
+      - name: Generate selected theme review set
+        env:
+          THEME: ${{ steps.target.outputs.theme }}
+          COUNT: ${{ steps.target.outputs.count }}
         run: |
           python - <<'PY'
           import os
           from scripts.art_generator import generate_artwork
 
-          generate_artwork(os.environ["THEME"], 12, "build/artwork-pilot", dpi=300, line_width_pt=2.4)
+          theme = os.environ["THEME"]
+          count = int(os.environ["COUNT"])
+          line_width_pt = 9.0 if theme == "christmas" else 2.4
+          generate_artwork(theme, count, "build/artwork-pilot", dpi=300, line_width_pt=line_width_pt)
           PY
 
       - name: Run deterministic artwork audit
@@ -71,7 +88,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: artwork-quality-${{ inputs.theme || 'fruit' }}-${{ github.run_number }}
+          name: artwork-quality-${{ steps.target.outputs.theme }}-${{ github.run_number }}
           path: |
             build/artwork-quality-report.json
             build/artwork-contact-sheet.png
