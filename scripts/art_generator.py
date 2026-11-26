@@ -4,6 +4,7 @@ import math
 from pathlib import Path
 from PIL import Image, ImageDraw, ImageFont, ImageOps
 from scripts.theme_art import FLOWERS, TOYS, BIRDS, ANIMALS, PROFESSIONS, draw_theme_art
+from scripts.theme_christmas import CHRISTMAS
 
 PAGE_W, PAGE_H = 2550, 3300
 DESIGNS = [
@@ -23,6 +24,7 @@ THEME_DESIGNS = {
     "birds": BIRDS,
     "animals": ANIMALS,
     "professions": PROFESSIONS,
+    "christmas": CHRISTMAS,
 }
 
 def _bezier(p0, p1, p2, p3, steps=48):
@@ -484,7 +486,7 @@ def _label(draw, text, cx, top_y, max_width, stroke_px):
 
 def generate_artwork(theme: str, count: int, output_dir: str | Path, dpi: int = 300, line_width_pt: float = 2.4) -> list[Path]:
     if theme != "fruit" and theme not in THEME_DESIGNS:
-        raise ValueError(f"Unsupported theme: {theme}. Supported themes: fruit, flowers, toys, birds, animals, professions")
+        raise ValueError(f"Unsupported theme: {theme}. Supported themes: fruit, flowers, toys, birds, animals, professions, christmas")
     max_count = len(DESIGNS) if theme == "fruit" else len(THEME_DESIGNS.get(theme, []))
     if count < 1 or count > max_count:
         raise ValueError(f"the built-in generator provides {max_count} distinct motifs for theme '{theme}'; larger books require an exact set of approved original artwork files")
