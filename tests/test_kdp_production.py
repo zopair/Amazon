@@ -8,6 +8,7 @@ from scripts.art_generator import generate_artwork
 from scripts.interior_builder import build_interior
 from scripts.cover_builder import build_cover
 from scripts.validator import validate_book_config, validate_book
+from scripts.pipeline import output_file_names, release_metadata, resolve_build_mode, run
 
 
 class CoverCalculatorTests(unittest.TestCase):
@@ -57,6 +58,71 @@ class PipelineInputSafetyTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             with self.assertRaisesRegex(ValueError,"inside the repository config"):
                 run(Path("../README.md"),Path(tmp)/"output")
+
+class PipelineReleaseGateTests(unittest.TestCase):
+    def test_sample_config_is_explicit_and_all_outputs_are_labeled(self):
+        meta = json.loads(Path("config/book_meta.json").read_text(encoding="utf-8"))
+        mode = resolve_build_mode(meta)
+        names = output_file_names(mode)
+        release = release_metadata(mode)
+
+        self.assertEqual(mode, "sample")
+        self.assertIn("SAMPLE", names["interior"])
+        self.assertIn("SAMPLE", names["cover"])
+        self.assertEqual(release["release_classification"], "SAMPLE_NOT_APPROVED")
+        self.assertFalse(release["publication_authorized"])
+
+    def test_missing_or_unknown_build_mode_fails_closed(self):
+        with self.assertRaisesRegex(ValueError, "build_mode must be explicitly set"):
+            resolve_build_mode({})
+        with self.assertRaisesRegex(ValueError, "build_mode must be explicitly set"):
+            resolve_build_mode({"build_mode": "publish"})
+
+    def test_production_candidate_requires_both_approval_markers(self):
+        meta = {"build_mode": "production_candidate"}
+        unapproved_specs = [
+            None,
+            {"status": "pilot", "pilot": {"commercial_50_artwork_release_authorized": False}},
+            {"status": "approved", "pilot": {"commercial_50_artwork_release_authorized": False}},
+            {"status": "pilot", "pilot": {"commercial_50_artwork_release_authorized": True}},
+        ]
+        for spec in unapproved_specs:
+            with self.subTest(spec=spec):
+                with self.assertRaisesRegex(PermissionError, "production_release_not_authorized"):
+                    resolve_build_mode(meta, spec)
+
+        approved_spec = {
+            "status": "approved",
+            "pilot": {"commercial_50_artwork_release_authorized": True},
+        }
+        self.assertEqual(resolve_build_mode(meta, approved_spec), "production_candidate")
+        release = release_metadata("production_candidate")
+        self.assertEqual(
+            release["release_classification"],
+            "PRODUCTION_CANDIDATE_NOT_FOR_PUBLICATION",
+        )
+        self.assertFalse(release["publication_authorized"])
+
+    def test_production_config_fails_before_output_directory_creation(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            spec_path = root / "artwork_generation_spec.json"
+            spec_path.write_text(
+                json.dumps({
+                    "status": "pilot",
+                    "pilot": {"commercial_50_artwork_release_authorized": False},
+                }),
+                encoding="utf-8",
+            )
+            output_dir = root / "blocked-output"
+            with self.assertRaisesRegex(PermissionError, "production_release_not_authorized"):
+                run(
+                    Path("config/book_meta.production.json"),
+                    output_dir,
+                    _artwork_spec_path=spec_path,
+                )
+            self.assertFalse(output_dir.exists())
+
 
 class ThemeSupportTests(unittest.TestCase):
     def test_all_requested_general_series_themes_generate_300_dpi_art(self):

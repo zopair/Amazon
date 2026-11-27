@@ -57,23 +57,23 @@ jobs:
       - name: Run regression tests
         run: python -m unittest discover -s tests -t . -v
 
-      - name: Build and validate KDP sample
+      - name: Build and validate selected KDP configuration
         env:
           BOOK_CONFIG: ${{ inputs.config || 'config/book_meta.json' }}
         run: |
           set -euo pipefail
           python -m scripts.pipeline --config "$BOOK_CONFIG" --output-dir build/output
 
-      - name: Upload sample PDFs and inspection files
+      - name: Upload clearly classified PDFs and inspection files
         if: success()
         uses: actions/upload-artifact@v4
         with:
-          name: kdp-fruit-friends-sample-${{ github.run_number }}
+          name: kdp-${{ inputs.config == 'config/book_meta.production.json' && 'production-candidate' || 'sample' }}-${{ github.run_number }}
           path: |
-            build/output/interior.pdf
-            build/output/cover.pdf
-            build/output/validation-report.json
-            build/output/sample-preview.png
-            build/output/manifest.json
+            build/output/*-SAMPLE.pdf
+            build/output/*-PRODUCTION-CANDIDATE.pdf
+            build/output/*-preview.png
+            build/output/*-validation-report.json
+            build/output/*-manifest.json
           if-no-files-found: error
           retention-days: 14

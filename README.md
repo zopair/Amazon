@@ -47,7 +47,7 @@ flowchart TB
     Queue --> Actions
 ```
 
-The artwork quality audit is a separate workflow; it is not currently a mandatory stage inside the PDF production pipeline. The production policy JSON documents release gates, but not every policy item is enforced automatically by the current pipeline.
+The artwork quality audit remains a separate workflow. The PDF pipeline requires an explicit `build_mode`: sample builds are named and recorded as unapproved samples; `production_candidate` builds fail closed unless `artwork_generation_spec.json` has `status: approved` and `pilot.commercial_50_artwork_release_authorized: true`. This gate permits only local candidate generation; it never authorizes KDP submission. Other policy items still require their documented reviews.
 
 ## 2. Tech Stack & Versions
 
@@ -111,7 +111,7 @@ python -m scripts.pipeline \
   --output-dir build/production
 ```
 
-This command is a technical build attempt, not release approval. The production configuration currently contains the author value `Satisflo`; verify that this is the intended publishing imprint/author before using the resulting files. The production artwork/release approval is explicitly not authorized in the artwork specification.
+This command currently fails closed: the artwork specification must have `status: approved` and `pilot.commercial_50_artwork_release_authorized: true`. Those markers must only be changed after the owner has completed the required visual, rights, and standards decisions. If the gate later passes, the outputs are labeled `PRODUCTION-CANDIDATE` and are not submitted to KDP. The production configuration currently contains the author value `Satisflo`; verify that publishing metadata before any future publishing decision.
 
 ### Run the complete test suite
 
@@ -161,8 +161,8 @@ Do not put personal access tokens, KDP login credentials, or publishing account 
 
 | File | Purpose |
 |---|---|
-| `config/book_meta.json` | 24-page Fruit Friends review sample |
-| `config/book_meta.production.json` | 100-page / 50-design production target; author currently set to `Satisflo` |
+| `config/book_meta.json` | 24-page Fruit Friends review sample (`build_mode: sample`) |
+| `config/book_meta.production.json` | 100-page / 50-design production candidate (`build_mode: production_candidate`); author currently set to `Satisflo` |
 | `config/series_defaults.json` | Shared trim, page-count, artwork, and series defaults |
 | `config/themes.json` | Six supported theme categories and example subjects |
 | `config/production_policy.json` | Machine-readable originality, print, metadata, and release policy |
@@ -173,11 +173,10 @@ Do not put personal access tokens, KDP login credentials, or publishing account 
 
 A successful pipeline run writes:
 
-- `interior.pdf` — single-sided book interior.
-- `cover.pdf` — one-page full-wrap cover.
-- `sample-preview.png` — contact-sheet preview of the source illustrations.
-- `validation-report.json` — automated structural and print preflight results.
-- `manifest.json` — configuration summary and SHA-256 hashes for generated files and source artwork.
+- `interior-SAMPLE.pdf` / `cover-SAMPLE.pdf` for sample builds.
+- `interior-PRODUCTION-CANDIDATE.pdf` / `cover-PRODUCTION-CANDIDATE.pdf` only after the machine-readable artwork gate passes.
+- Mode-specific preview, validation report, and manifest files.
+- Every manifest records the build mode and release classification; `publication_authorized` is always `false`.
 
 ### Production rules and current implementation boundaries
 
@@ -185,7 +184,7 @@ A successful pipeline run writes:
 - The artwork loader generates a built-in set when the theme asset directory is empty. If any source assets are present, it requires an exact complete set for the selected book and rejects pixel-identical duplicates and colored source artwork.
 - The sample and production JSON configurations currently set `line_width_pt` to 9.0, while `series_defaults.json` and the artwork quality workflow use 2.4 pt. This configuration drift must be reconciled before treating a series-wide line-width standard as locked.
 - The generator rasterizes English subject-name labels into the artwork, while `artwork_generation_spec.json` currently declares `allow_text: false`. The quality auditor does not detect or enforce this text rule. Resolve this mismatch before relying on the artwork specification as a fully enforced contract.
-- The production policy and artwork human-review requirements are documented, but the main PDF pipeline does not currently consume the policy file or a human-approval registry as a release gate. A successful build is not equivalent to a release authorization.
+- The main PDF pipeline now requires an explicit `build_mode`. A `production_candidate` build is rejected before output creation unless the artwork specification is marked `approved` and `commercial_50_artwork_release_authorized` is exactly `true`. This is a fail-closed build gate, not publication authorization; metadata, rights, KDP Print Previewer, and owner publication decisions remain separate.
 - The 100-page configuration's `author` is `Satisflo`, while the 24-page sample leaves the author blank. Publishing metadata must be explicitly reviewed and aligned before submission.
 
 ### GitHub Actions workflows
@@ -229,10 +228,10 @@ The test suite covers:
 
 ### CI evidence observed during this review
 
-- **Inspector Tests:** latest observed run on 22 November 2026 — Success; actionlint and the Python unit-test step both passed.
-- **KDP Intervention Queue:** latest observed run on 26 November 2026 — Success.
-- **KDP Production Pipeline:** no recent successful production-build run was confirmed in the workflow history reviewed for this README update.
-- **Artwork Quality Audit:** workflow definition is present; a recent successful run was not confirmed in the reviewed history.
+- **Inspector Tests:** latest observed PR run on 22 November 2026 — Success; 47/47 Python tests passed.
+- **KDP Intervention Queue:** latest observed scheduled run on 27 November 2026 — Success; no approved intervention was resumed.
+- **KDP Production Pipeline:** latest observed main build remains the 21 November 2026 24-page / 12-illustration sample; no 100-page production-candidate build was run.
+- **Artwork Quality Audit:** latest observed Christmas audit on 22 November 2026 inspected 50 motifs, reported 0 automated errors and 3 occupancy warnings, with human review pending.
 
 A successful Inspector Tests workflow is not proof that a new PDF build or KDP upload was accepted. Always inspect the generated PDFs and use KDP Print Previewer before any publication decision.
 
@@ -252,14 +251,14 @@ A successful Inspector Tests workflow is not proof that a new PDF build or KDP u
 | Automatic repairs | Framework implemented; repair registry currently empty |
 | Owner-controlled resume | Implemented through issue labels and manual approval-note validation |
 | KDP publishing | Not integrated; no automatic account access or publication |
-| Release governance | Documented, but some policy/human approval gates are not wired into the pipeline |
+| Release governance | Explicit fail-closed production-candidate build gate; remaining print-preview, rights, metadata, and publication gates still require human review |
 | License | No root `LICENSE` file was present in the reviewed repository tree; redistribution terms should be clarified |
 
 ### Readiness gaps before commercial use
 
 1. Reconcile the 2.4 pt versus 9.0 pt line-width configuration.
 2. Reconcile the artwork specification's no-text rule with the generator's rasterized subject labels.
-3. Make production policy and human approval enforceable by the pipeline, rather than documentation-only.
+3. Wire remaining print-preview, rights, metadata, and publication approval evidence into a separate release record before commercial use.
 4. Confirm the intended publishing author/imprint and align every book configuration and cover.
 5. Complete visual originality, similarity, rights-provenance, and full-volume review for every design.
 6. Validate every final PDF in the official KDP Print Previewer and confirm current KDP requirements before upload.

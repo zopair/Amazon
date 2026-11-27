@@ -13,7 +13,7 @@
   },
   "trim": {
     "width_in": 8.5,
-    "height_in": 11.0,
+    "height_in": 11,
     "bleed_in": 0.125,
     "interior_bleed": false,
     "cover_bleed": true
@@ -26,7 +26,7 @@
     "blank_reverse_pages": true,
     "illustration_page_parity": "odd",
     "min_dpi": 300,
-    "line_width_pt": 9.0,
+    "line_width_pt": 9,
     "min_line_width_pt": 0.75,
     "inside_margin_in": 0.375,
     "outside_margin_in": 0.375,
@@ -37,7 +37,7 @@
     "finish_recommendation": "matte",
     "include_spine_text": false,
     "reserve_barcode_area": true,
-    "barcode_area_width_in": 2.0,
+    "barcode_area_width_in": 2,
     "barcode_area_height_in": 1.2
   },
   "content": {
@@ -48,12 +48,13 @@
     "art_style": "original kawaii bold-and-easy outlines (~9 pt), one large smiling subject per page with shiny eyes and cheek ovals, small sparkle/heart companion accents, English name label in large colorable outline letters, no grayscale, no shading, no gradients"
   },
   "output": {
-    "interior_pdf": "build/output/fruit-friends-interior.pdf",
-    "cover_pdf": "build/output/fruit-friends-cover.pdf",
-    "report_json": "build/output/validation-report.json"
+    "interior_pdf": "build/output/interior-PRODUCTION-CANDIDATE.pdf",
+    "cover_pdf": "build/output/cover-PRODUCTION-CANDIDATE.pdf",
+    "report_json": "build/output/production-candidate-validation-report.json"
   },
   "publishing": {
     "kdp_ai_generated_content_disclosure_required_if_ai_generated": true,
     "do_not_publish_automatically": true
-  }
+  },
+  "build_mode": "production_candidate"
 }
