@@ -145,7 +145,7 @@ def run(
     strip_pdf_metadata(cover)
     report = validate_book(interior, cover, meta)
     report_path.write_text(
-        json.dumps(report, indent=2, ensure_ascii=False) + "\\n",
+        json.dumps(report, indent=2, ensure_ascii=False) + "\n",
         encoding="utf-8",
     )
     _make_preview(images, preview)
@@ -174,10 +174,12 @@ def run(
         "source_artwork": [{"name": path.name, "sha256": _sha256(path)} for path in images],
     }
     manifest_path.write_text(
-        json.dumps(manifest, indent=2, ensure_ascii=False) + "\\n",
+        json.dumps(manifest, indent=2, ensure_ascii=False) + "\n",
         encoding="utf-8",
     )
     return {"report": report, "manifest": manifest, "output_dir": str(output_dir)}
+
+
 def main() -> int:
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--config",default="config/book_meta.json")
